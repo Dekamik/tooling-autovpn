@@ -5,6 +5,7 @@ import (
     "fmt"
     "github.com/docopt/docopt-go"
     "os"
+    "sort"
     "strings"
 )
 
@@ -74,6 +75,7 @@ Options:
             for _, region := range regions {
                 regionStrings = append(regionStrings, fmt.Sprintf("%s: %s", region.Id, region.Country))
             }
+            sort.Strings(regionStrings)
             str = strings.Join(regionStrings, "\n")
         }
 
