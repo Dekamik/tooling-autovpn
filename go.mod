@@ -2,4 +2,7 @@ module autovpn
 
 go 1.17
 
-require github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
+require (
+	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
+	github.com/spf13/viper v1.9.0 // indirect
+)

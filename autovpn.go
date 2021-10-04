@@ -13,56 +13,32 @@ func check(e error) {
 }
 
 func main() {
-    usage := `Provisions and destroys VPN servers.
-
-Usage: 
-  autovpn create [-cvy] REGION ...
-  autovpn destroy [-kvy] REGION ...
-  autovpn purge [-vy]
-  autovpn regions [-v] [--json]
-  autovpn -h | --help
-  autovpn --version
-
-Commands:
-  create   Create server(s) in region(s)
-  destroy  Destroy server(s) in region(s)
-  purge    Destroy all servers across all regions
-  regions  List all available regions
-
-Arguments:
-  REGION  Linode region for server. Find avaiable regions by running "autovpn regions"
-
-Options:
-  -c --connect    Auto-connect with OpenVPN. (requires root privileges)
-  -k --keep-ovpn  Keep .ovpn-config.
-  --json          Print as JSON.
-  -y              Auto-approve.
-  -v --verbose    Print more text.
-  -h --help       Show this screen.
-  --version       Show version.`
-
-    bindErr := bindConfig(usage, os.Args[1:], "v1.0.0")
+    bindErr := bindOptions(os.Args[1:], "v1.0.0")
     check(bindErr)
+    readErr := readConfig()
+    check(readErr)
 
-    if config.CreateCmd {
-        validationErr := validateRegions(config.Regions)
+    if options.CreateCmd {
+        validationErr := validateRegions(options.Regions)
+        check(validationErr)
+        _, tokenErr := findToken()
+        check(tokenErr)
+
+        os.Exit(0)
+    }
+
+    if options.DestroyCmd {
+        validationErr := validateRegions(options.Regions)
         check(validationErr)
 
         os.Exit(0)
     }
 
-    if config.DestroyCmd {
-        validationErr := validateRegions(config.Regions)
-        check(validationErr)
-
+    if options.PurgeCmd {
         os.Exit(0)
     }
 
-    if config.PurgeCmd {
-        os.Exit(0)
-    }
-
-    if config.RegionsCmd {
+    if options.RegionsCmd {
         err := showRegions()
         check(err)
 

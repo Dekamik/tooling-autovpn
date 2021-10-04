@@ -74,7 +74,7 @@ func showRegions() error {
 	verboseln("OK")
 
 	var str = ""
-	if config.PrintJson {
+	if options.PrintJson {
 		jsonBytes, jsonErr := json.Marshal(regions)
 		if jsonErr != nil {
 			return jsonErr
@@ -95,7 +95,7 @@ func showRegions() error {
 
 func validateRegions(regionArgs []string) error {
 	if len(regionArgs) == 0 {
-		return errors.New("no region specified")
+		return errors.New("No region specified ")
 	}
 
 	verbose("Fetching regions...")
@@ -107,7 +107,7 @@ func validateRegions(regionArgs []string) error {
 
 	for _, region := range regionArgs {
 		if !isRegion(region, regions) {
-			return errors.New(fmt.Sprintf("illegal region \"%s\"", region))
+			return errors.New(fmt.Sprintf("Illegal region \"%s\"", region))
 		}
 	}
 

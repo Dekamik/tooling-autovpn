@@ -5,13 +5,13 @@ import (
 )
 
 func verbose(str string) {
-	if config.Verbose {
+	if options.Verbose {
 		fmt.Print(str)
 	}
 }
 
 func verboseln(str string) {
-	if config.Verbose {
+	if options.Verbose {
 		fmt.Println(str)
 	}
 }
