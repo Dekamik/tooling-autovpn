@@ -1,30 +1,15 @@
 package main
 
 import (
-    "encoding/json"
     "fmt"
-    "github.com/docopt/docopt-go"
     "os"
-    "sort"
-    "strings"
 )
 
-var config struct {
-    CreateCmd  bool `docopt:"create"`
-    DestroyCmd bool `docopt:"destroy"`
-    PurgeCmd   bool `docopt:"purge"`
-    RegionsCmd bool `docopt:"regions"`
-
-    Regions	[]string `docopt:"REGION"`
-
-    AutoConnect	bool `docopt:"-c,--connect"`
-    KeepOvpn    bool `docopt:"-k,--keep-ovpn"`
-    PrintJson   bool `docopt:"--json"`
-    AutoApprove bool `docopt:"-y"`
-
-    PrintHelp    bool `docopt:"-h,--help"`
-    PrintVersion bool `docopt:"--version"`
-    Verbose		 bool `docopt:"-v,--verbose"`
+func check(e error) {
+    if e != nil {
+        fmt.Println(e)
+        os.Exit(1)
+    }
 }
 
 func main() {
@@ -56,47 +41,31 @@ Options:
   -h --help       Show this screen.
   --version       Show version.`
 
-    opts, _ := docopt.ParseArgs(usage, os.Args[1:], "v1.0.0")
-    bindErr := opts.Bind(&config)
+    bindErr := bindConfig(usage, os.Args[1:], "v1.0.0")
     check(bindErr)
 
-    if config.RegionsCmd {
-        verbose("Fetching regions...")
-        regions := getRegions()
-        verboseln("OK")
+    if config.CreateCmd {
+        validationErr := validateRegions(config.Regions)
+        check(validationErr)
 
-        var str = ""
-        if config.PrintJson {
-            jsonBytes, jsonErr := json.Marshal(regions)
-            str = string(jsonBytes)
-            check(jsonErr)
-        } else {
-            var regionStrings []string
-            for _, region := range regions {
-                regionStrings = append(regionStrings, fmt.Sprintf("%s: %s", region.Id, region.Country))
-            }
-            sort.Strings(regionStrings)
-            str = strings.Join(regionStrings, "\n")
-        }
-
-        fmt.Println(str)
         os.Exit(0)
     }
 
-    if config.CreateCmd || config.DestroyCmd {
-        if len(config.Regions) == 0 {
-            fmt.Println("No region specified.")
-            os.Exit(1)
-        }
+    if config.DestroyCmd {
+        validationErr := validateRegions(config.Regions)
+        check(validationErr)
 
-        verbose("Fetching regions...")
-        regions := getRegions()
-        verboseln("OK")
-        for _, region := range config.Regions {
-            if !isRegion(region, regions) {
-                fmt.Printf("Illegal region %s.", region)
-                os.Exit(1)
-            }
-        }
+        os.Exit(0)
+    }
+
+    if config.PurgeCmd {
+        os.Exit(0)
+    }
+
+    if config.RegionsCmd {
+        err := showRegions()
+        check(err)
+
+        os.Exit(0)
     }
 }
