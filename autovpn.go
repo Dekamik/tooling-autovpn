@@ -1,10 +1,10 @@
 package main
 
 import (
+    "encoding/json"
     "fmt"
     "github.com/docopt/docopt-go"
     "os"
-    "strings"
 )
 
 var config struct {
@@ -39,7 +39,7 @@ Commands:
   create    Create server(s) in region(s)
   destroy   Destroy server(s) in region(s)
   purge     Destroy all servers across all regions
-  regions   List all available regions
+  regions   List all available regions as JSON
 
 Arguments:
   REGION    Linode region for server. Find avaiable regions by running "autovpn regions"
@@ -57,8 +57,13 @@ Options:
     check(bindErr)
 
     if config.RegionsMode {
+        verbose("Fetching regions...")
         regions := getRegions()
-        fmt.Println(strings.Join(regionStrings(regions), ", "))
+        verboseln("OK")
+        jsonStr, jsonErr := json.Marshal(regions)
+        check(jsonErr)
+
+        fmt.Println(string(jsonStr))
         os.Exit(0)
     }
 
@@ -68,7 +73,9 @@ Options:
             os.Exit(1)
         }
 
+        verbose("Fetching regions...")
         regions := getRegions()
+        verboseln("OK")
         for _, region := range config.Regions {
             if !isRegion(region, regions) {
                 fmt.Printf("Illegal region %s", region)

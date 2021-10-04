@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -14,9 +13,6 @@ type region struct {
 }
 
 func getRegions() []region {
-	verbose("Fetching regions...")
-	defer verboseln("OK")
-
 	type regionRes struct {
 		Data []region `json:"data"`
 	}
@@ -44,14 +40,6 @@ func getRegions() []region {
 	check(jsonErr)
 
 	return regions.Data
-}
-
-func regionStrings(regions []region) []string {
-	var strArr []string
-	for _, region := range regions {
-		strArr = append(strArr, fmt.Sprintf("%s (%s)", region.Id, region.Country))
-	}
-	return strArr
 }
 
 func isRegion(str string, regions []region) bool {
