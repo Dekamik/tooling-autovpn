@@ -5,6 +5,7 @@ import (
     "fmt"
     "github.com/docopt/docopt-go"
     "os"
+    "strings"
 )
 
 var config struct {
@@ -17,6 +18,7 @@ var config struct {
 
     AutoConnect	bool `docopt:"-c,--connect"`
     KeepOvpn    bool `docopt:"-k,--keep-ovpn"`
+    PrintJson   bool `docopt:"--json"`
     AutoApprove bool `docopt:"-y"`
 
     PrintHelp    bool `docopt:"-h,--help"`
@@ -31,26 +33,27 @@ Usage:
   autovpn create [-cvy] REGION ...
   autovpn destroy [-kvy] REGION ...
   autovpn purge [-vy]
-  autovpn regions [-v]
+  autovpn regions [-v] [--json]
   autovpn -h | --help
   autovpn --version
 
 Commands:
-  create    Create server(s) in region(s)
-  destroy   Destroy server(s) in region(s)
-  purge     Destroy all servers across all regions
-  regions   List all available regions as JSON
+  create   Create server(s) in region(s)
+  destroy  Destroy server(s) in region(s)
+  purge    Destroy all servers across all regions
+  regions  List all available regions
 
 Arguments:
-  REGION    Linode region for server. Find avaiable regions by running "autovpn regions"
+  REGION  Linode region for server. Find avaiable regions by running "autovpn regions"
 
 Options:
-  -c --connect      Auto-connect with OpenVPN. (requires root privileges)
-  -k --keep-ovpn    Keep .ovpn-config.
-  -v --verbose      Print more text.
-  -y                Auto-approve.
-  -h --help         Show this screen.
-  --version         Show version.`
+  -c --connect    Auto-connect with OpenVPN. (requires root privileges)
+  -k --keep-ovpn  Keep .ovpn-config.
+  --json          Print as JSON.
+  -y              Auto-approve.
+  -v --verbose    Print more text.
+  -h --help       Show this screen.
+  --version       Show version.`
 
     opts, _ := docopt.ParseArgs(usage, os.Args[1:], "v1.0.0")
     bindErr := opts.Bind(&config)
@@ -60,10 +63,21 @@ Options:
         verbose("Fetching regions...")
         regions := getRegions()
         verboseln("OK")
-        jsonStr, jsonErr := json.Marshal(regions)
-        check(jsonErr)
 
-        fmt.Println(string(jsonStr))
+        var str = ""
+        if config.PrintJson {
+            jsonBytes, jsonErr := json.Marshal(regions)
+            str = string(jsonBytes)
+            check(jsonErr)
+        } else {
+            var regionStrings []string
+            for _, region := range regions {
+                regionStrings = append(regionStrings, fmt.Sprintf("%s: %s", region.Id, region.Country))
+            }
+            str = strings.Join(regionStrings, "\n")
+        }
+
+        fmt.Println(str)
         os.Exit(0)
     }
 
