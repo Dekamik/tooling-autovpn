@@ -8,20 +8,20 @@ import (
 )
 
 var config struct {
-    CreateMode		bool 	    `docopt:"create"`
-    DestroyMode     bool        `docopt:"destroy"`
-    PurgeMode       bool        `docopt:"purge"`
-    RegionsMode		bool	    `docopt:"regions"`
+    CreateCmd  bool `docopt:"create"`
+    DestroyCmd bool `docopt:"destroy"`
+    PurgeCmd   bool `docopt:"purge"`
+    RegionsCmd bool `docopt:"regions"`
 
-    Regions			[]string    `docopt:"REGION"`
+    Regions	[]string `docopt:"REGION"`
 
-    AutoConnect		bool	    `docopt:"-c,--connect"`
-    KeepOvpn        bool        `docopt:"-k,--keep-ovpn"`
-    AutoApprove     bool        `docopt:"-y"`
+    AutoConnect	bool `docopt:"-c,--connect"`
+    KeepOvpn    bool `docopt:"-k,--keep-ovpn"`
+    AutoApprove bool `docopt:"-y"`
 
-    PrintHelp 		bool 	    `docopt:"-h,--help"`
-    PrintVersion 	bool 	    `docopt:"--version"`
-    Verbose			bool	    `docopt:"-v,--verbose"`
+    PrintHelp    bool `docopt:"-h,--help"`
+    PrintVersion bool `docopt:"--version"`
+    Verbose		 bool `docopt:"-v,--verbose"`
 }
 
 func main() {
@@ -56,7 +56,7 @@ Options:
     bindErr := opts.Bind(&config)
     check(bindErr)
 
-    if config.RegionsMode {
+    if config.RegionsCmd {
         verbose("Fetching regions...")
         regions := getRegions()
         verboseln("OK")
@@ -67,9 +67,9 @@ Options:
         os.Exit(0)
     }
 
-    if config.CreateMode || config.DestroyMode {
+    if config.CreateCmd || config.DestroyCmd {
         if len(config.Regions) == 0 {
-            fmt.Println("No region selected")
+            fmt.Println("No region specified.")
             os.Exit(1)
         }
 
@@ -78,7 +78,7 @@ Options:
         verboseln("OK")
         for _, region := range config.Regions {
             if !isRegion(region, regions) {
-                fmt.Printf("Illegal region %s", region)
+                fmt.Printf("Illegal region %s.", region)
                 os.Exit(1)
             }
         }
