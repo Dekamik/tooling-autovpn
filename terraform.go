@@ -8,8 +8,8 @@ import (
 )
 
 type Instance struct {
-    Name  	  string
-    HostName  string
+    Name      string
+    Hostname  string
     Token     string
     PublicKey string
     Region    string
@@ -30,16 +30,24 @@ var tfTemplate = `module "{{.Name}}" {
 }
 `
 
-func createFile(name string, instance Instance) error {
+func createFile(instance Instance) error {
+    homeDir, _ := os.UserHomeDir()
+    mkDirErr := os.MkdirAll(homeDir + "/.autovpn", 0777)
+    check(mkDirErr)
+
     tmpl, tmplErr := template.New("tfmodule").Parse(tfTemplate)
     if tmplErr != nil { return tmplErr }
 
-    file, fileErr := os.Create(fmt.Sprintf("~/.autovpn/%s.tf", name))
+    filePath := fmt.Sprintf("%s/.autovpn/%s.tf", homeDir, instance.Name)
+    fmt.Println(filePath)
+    file, fileErr := os.Create(filePath)
     if fileErr != nil { return tmplErr }
     writer := bufio.NewWriter(file)
 
     execErr := tmpl.Execute(writer, instance)
     if execErr != nil { return execErr }
+    flushErr := writer.Flush()
+    if flushErr != nil { return flushErr }
 
     return nil
 }
