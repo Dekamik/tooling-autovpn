@@ -5,7 +5,7 @@ import (
     "os"
 )
 
-func handle(e error) {
+func checkGracefully(e error) {
     if e != nil {
         fmt.Println(e)
         os.Exit(1)
@@ -20,9 +20,9 @@ func main() {
 
     if options.CreateCmd {
         validationErr := validateRegions(options.Regions)
-        handle(validationErr)
+        checkGracefully(validationErr)
         token, tokenErr := findToken()
-        handle(tokenErr)
+        checkGracefully(tokenErr)
 
         createErr := create(token)
         check(createErr)
@@ -32,9 +32,9 @@ func main() {
 
     if options.DestroyCmd {
         validationErr := validateRegions(options.Regions)
-        handle(validationErr)
+        checkGracefully(validationErr)
         token, tokenErr := findToken()
-        handle(tokenErr)
+        checkGracefully(tokenErr)
 
         destroyErr := destroy(token)
         check(destroyErr)
@@ -44,7 +44,7 @@ func main() {
 
     if options.PurgeCmd {
         token, tokenErr := findToken()
-        handle(tokenErr)
+        checkGracefully(tokenErr)
 
         purgeErr := purge(token)
         check(purgeErr)

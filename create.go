@@ -1,25 +1,29 @@
 package main
 
 import (
-    "io/ioutil"
+    "bufio"
     "os"
+    "strings"
 )
 
 func create(token string) error {
     var instances []Instance
-    hostName, hostNameErr := os.Hostname()
-    if hostNameErr != nil { return hostNameErr }
+    hostName, _ := os.Hostname()
     homeDir, _ := os.UserHomeDir()
-    publicKey, readErr := ioutil.ReadFile(homeDir + "/.ssh/id_rsa.pub")
+
+    sshFile, openErr := os.Open(homeDir + "/.ssh/id_ed25519.pub")
+    if openErr != nil { return openErr }
+    sshReader := bufio.NewReader(sshFile)
+    publicKey, readErr := sshReader.ReadString('\n')
     if readErr != nil { return readErr }
-    pubKeyContent := string(publicKey)
+    publicKey = strings.TrimSuffix(publicKey, "\n")
 
     for _, region := range options.Regions {
         instances = append(instances, Instance{
             Name:      region,
             Hostname:  hostName,
             Token:     token,
-            PublicKey: pubKeyContent,
+            PublicKey: publicKey,
             Region:    region,
             Type:      "g6-nanode-1",
         })
