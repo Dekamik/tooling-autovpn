@@ -19,6 +19,7 @@ var options struct {
 	Token       string `docopt:"-t,--token"`
 	AutoConnect	bool   `docopt:"-c,--connect"`
 	KeepOvpn    bool   `docopt:"-k,--keep-ovpn"`
+	ApplyOnAll  bool   `docopt:"-a,--all"`
 	PrintJson   bool   `docopt:"--json"`
 	AutoApprove bool   `docopt:"-y"`
 
