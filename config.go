@@ -12,6 +12,7 @@ var options struct {
 	DestroyCmd bool `docopt:"destroy"`
 	PurgeCmd   bool `docopt:"purge"`
 	RegionsCmd bool `docopt:"regions"`
+	StatusCmd  bool `docopt:"status"`
 
 	Regions	[]string `docopt:"REGION"`
 
@@ -35,8 +36,9 @@ var usage = `Provisions and destroys VPN servers.
 Usage: 
   autovpn create [-cvy] [-t TOKEN | --token TOKEN] REGION ...
   autovpn destroy [-kvy] [-t TOKEN | --token TOKEN] REGION ...
-  autovpn purge [-vy] [-t TOKEN | --token TOKEN]
+  autovpn purge [-avy] [-t TOKEN | --token TOKEN]
   autovpn regions [-v] [--json]
+  autovpn status [-av] [--json]
   autovpn -h | --help
   autovpn --version
 
@@ -45,6 +47,7 @@ Commands:
   destroy  Destroy server(s) in region(s)
   purge    Destroy all servers across all regions
   regions  List all available regions
+  status   VPN server status
 
 Arguments:
   REGION  Linode region for server. Find avaiable regions by running "autovpn regions"
@@ -53,6 +56,7 @@ Options:
   -t TOKEN --token TOKEN  API token for your Linode account
   -c --connect            Auto-connect with OpenVPN. (requires root privileges)
   -k --keep-ovpn          Keep .ovpn-options.
+  -a --all				  Run command on all servers on your account, not only those associated with your computer.
   --json                  Print as JSON.
   -y                      Auto-approve.
   -v --verbose            Print more text.
