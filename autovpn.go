@@ -58,4 +58,11 @@ func main() {
 
         os.Exit(0)
     }
+
+    if options.StatusCmd {
+        err := showStatus()
+        check(err)
+
+        os.Exit(0)
+    }
 }
