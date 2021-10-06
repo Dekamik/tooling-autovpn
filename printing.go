@@ -17,7 +17,8 @@ func verboseln(str string) {
 func printTable(m [][]string) {
     var format = ""
     for col := 0; col < len(m[0]); col++ {
-        format += fmt.Sprintf("%%-%ds ", maxlen(Map(m, func(item interface{}) interface {} { return item.([]string)[col] })))
+        colValues := Map(m, func(item interface{}) interface {} { return item.([]string)[col] })
+        format += fmt.Sprintf("%%-%ds ", maxlen(colValues))
     }
     format += "\n"
     for _, cols := range m {
