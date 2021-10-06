@@ -87,7 +87,7 @@ func showRegions() error {
 		if options.PrintHeaders {
 			matrix = append([][]string{{"Region ID", "Country Code"}}, matrix...)
 		}
-		printMatrix(matrix)
+		printTable(matrix)
 	}
 
 	return nil
