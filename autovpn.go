@@ -60,7 +60,10 @@ func main() {
     }
 
     if options.StatusCmd {
-        err := showStatus()
+        token, tokenErr := findToken()
+        checkGracefully(tokenErr)
+
+        err := showStatus(token)
         check(err)
 
         os.Exit(0)
