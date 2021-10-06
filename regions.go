@@ -80,23 +80,14 @@ func showRegions() error {
 		str = string(jsonBytes)
 		fmt.Println(str)
 	} else {
-		matrixExample := [][]interface{} {
-			{"A", 1},
-			{"B", 2},
+		matrix := make([][]string, len(regions))
+		for i, r := range regions {
+			matrix[i] = []string { r.Id, r.Country }
 		}
-		fmt.Println(matrixExample)
-		matrix := Map(regions, func(item interface{}) interface{} { return []interface{} { item.(region).Id, item.(region).Country } })
-		fmt.Println(matrix)
-		printMatrix(matrix)
 		if options.PrintHeaders {
-			regions = append([]region{{Id: "Region ID", Country: "Country Code"}}, regions...)
+			matrix = append([][]string{{"Region ID", "Country Code"}}, matrix...)
 		}
-		format := fmt.Sprintf("%%-%ds %%-%ds\n",
-			maxlen(Map(regions, func(item interface{}) interface{} { return item.(region).Id })),
-			maxlen(Map(regions, func(item interface{}) interface{} { return item.(region).Country })))
-		for _, region := range regions {
-			fmt.Printf(format, region.Id, region.Country)
-		}
+		printMatrix(matrix)
 	}
 
 	return nil

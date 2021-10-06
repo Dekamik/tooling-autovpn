@@ -24,8 +24,6 @@ func verboseln(str string) {
 	}
 }
 
-
-
 func printMatrix(m [][]string) {
 	var format = ""
 	for col := 0; col < len(m[0]); col++ {
@@ -33,25 +31,46 @@ func printMatrix(m [][]string) {
 	}
 	format += "\n"
 	for _, cols := range m {
-		fmt.Printf(format, cols...)
+		fmt.Printf(format, asInterfaceSlice(cols)...)
 	}
 }
 
-func stringMatrix(t [][]interface{}) [][]string {
-	if reflect.TypeOf(t).Kind() == reflect.Slice {
-		s := reflect.ValueOf(t)
-		matrix := make([][]string, s.Len())
-		for i := 0; i < s.Len(); i++ {
-			o := s.Index(i).Elem()
-			arr := make([]string, o.Len())
-			for j := 0; j < o.Len(); j++ {
-				arr[j] = o.Index(j).String()
-			}
-			matrix[i] = arr
-		}
-		return matrix
+func asStringSlice(o []interface{}) []string {
+	s := make([]string, len(o))
+	for i, v := range o {
+		s[i] = fmt.Sprint(v)
 	}
-	return nil
+	return s
+}
+
+func asStringMatrix(o [][]interface{}) [][]string {
+	m := make([][]string, len(o))
+	for i, a := range o {
+		m[i] = make([]string, len(a))
+		for j, b := range a {
+			m[i][j] = fmt.Sprint(b)
+		}
+	}
+	return m
+}
+
+func asInterfaceSlice(o []string) []interface{} {
+	s := make([]interface{}, len(o))
+	for i, v := range o {
+		s[i] = v
+	}
+	return s
+}
+
+func asInterfaceMatrix(o [][]string) [][]interface{} {
+	m := make([][]interface{}, len(o))
+	for i, a := range o {
+		m[i] = make([]interface{}, len(a))
+		for j, b := range a {
+			m[i][j] = fmt.Sprint(b)
+		}
+	}
+	return m
 }
 
 func Map(t interface{}, f func(interface{}) interface{}) []interface{} {
