@@ -31,26 +31,25 @@ var tfTemplate = `module "{{.Name}}" {
 }
 `
 
-func createFile(instance Instance) error {
+func createFile(instance Instance) (string, error) {
     homeDir, _ := os.UserHomeDir()
     mkDirErr := os.MkdirAll(homeDir + "/.autovpn", 0777)
     check(mkDirErr)
 
     tmpl, tmplErr := template.New("tfmodule").Parse(tfTemplate)
-    if tmplErr != nil { return tmplErr }
+    if tmplErr != nil { return "", tmplErr }
 
     filePath := fmt.Sprintf("%s/.autovpn/%s.tf", homeDir, instance.Name)
-    fmt.Println(filePath)
     file, fileErr := os.Create(filePath)
-    if fileErr != nil { return tmplErr }
+    if fileErr != nil { return filePath, tmplErr }
     writer := bufio.NewWriter(file)
 
     execErr := tmpl.Execute(writer, instance)
-    if execErr != nil { return execErr }
+    if execErr != nil { return filePath, execErr }
     flushErr := writer.Flush()
-    if flushErr != nil { return flushErr }
+    if flushErr != nil { return filePath, flushErr }
 
-    return nil
+    return filePath, nil
 }
 
 func create(token string) error {
@@ -76,9 +75,18 @@ func create(token string) error {
         })
     }
 
-    for _, instance := range instances {
-        createErr := createFile(instance)
-        if createErr != nil { return createErr }
+    summary := make([][]string, len(options.Regions))
+    if options.Verbose {
+        defer printTable(summary)
+    }
+
+    for i, instance := range instances {
+        fileName, createErr := createFile(instance)
+        if createErr != nil {
+            summary[i] = []string { fileName, "Error" }
+            return createErr
+        }
+        summary[i] = []string { fileName, "Created" }
     }
 
     return nil

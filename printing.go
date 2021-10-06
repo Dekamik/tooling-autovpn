@@ -2,15 +2,21 @@ package main
 
 import "fmt"
 
-func verbose(str string) {
+func verbose(a ...interface{}) {
     if options.Verbose {
-        fmt.Print(str)
+        fmt.Print(a...)
     }
 }
 
-func verboseln(str string) {
+func verbosef(format string, a ...interface{}) {
     if options.Verbose {
-        fmt.Println(str)
+        fmt.Printf(format, a...)
+    }
+}
+
+func verboseln(a ...interface{}) {
+    if options.Verbose {
+        fmt.Println(a...)
     }
 }
 

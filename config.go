@@ -30,7 +30,7 @@ var options struct {
 }
 
 var config struct {
-    ApiToken string `mapstructure:"api-token"`
+    Token string `mapstructure:"token"`
 }
 
 var usage = `Provisions and destroys VPN servers.
@@ -78,7 +78,7 @@ func bindOptions(argv []string, semver string) error {
 func readConfig() error {
     viper.AddConfigPath("$HOME/.autovpn")
     viper.SetConfigName("config")
-    viper.SetConfigType("ini")
+    viper.SetConfigType("toml")
     readErr := viper.ReadInConfig()
     if readErr != nil {
         if strings.Contains(readErr.Error(), "Not Found") {
@@ -93,8 +93,8 @@ func readConfig() error {
 }
 
 func findToken() (string, error) {
-    if len(config.ApiToken) != 0 {
-        return config.ApiToken, nil
+    if len(config.Token) != 0 {
+        return config.Token, nil
     }
     if len(options.Token) != 0 {
         return options.Token, nil
