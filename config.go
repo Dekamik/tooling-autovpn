@@ -60,7 +60,7 @@ Options:
   -k --keep-ovpn          Keep .ovpn-options.
   -a --all				  Run command on all servers on your account, not only those associated with your computer.
   --json                  Print as JSON.
-  --headers				  Print headers
+  --headers				  Print descriptive headers
   -y                      Auto-approve.
   -v --verbose            Print more text.
   -h --help               Show this screen.
