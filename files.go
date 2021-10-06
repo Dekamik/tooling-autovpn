@@ -19,10 +19,8 @@ func removeFiles(files []string) error {
                 summary[i] = []string { file, "Error" }
                 return removeErr
             }
-
             summary[i] = []string { file, "Removed" }
         } else {
-
             summary[i] = []string { file, "Not found" }
         }
     }

@@ -5,9 +5,9 @@ import (
     "reflect"
 )
 
-func asInterfaceSlice(o []string) []interface{} {
-    s := make([]interface{}, len(o))
-    for i, v := range o {
+func asInterfaceSlice(origin []string) []interface{} {
+    s := make([]interface{}, len(origin))
+    for i, v := range origin {
         s[i] = v
     }
     return s
