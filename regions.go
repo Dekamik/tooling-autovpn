@@ -7,8 +7,6 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"sort"
-	"strings"
 )
 
 type region struct {
@@ -80,16 +78,16 @@ func showRegions() error {
 			return jsonErr
 		}
 		str = string(jsonBytes)
+		fmt.Println(str)
 	} else {
-		var regionStrings []string
-		for _, region := range regions {
-			regionStrings = append(regionStrings, fmt.Sprintf("%s: %s", region.Id, region.Country))
+		if options.PrintHeaders {
+			fmt.Printf("%-15s %-15s\n", "Region ID", "Country Code")
 		}
-		sort.Strings(regionStrings)
-		str = strings.Join(regionStrings, "\n")
+		for _, region := range regions {
+			fmt.Printf("%-15s %-15s\n", region.Id, region.Country)
+		}
 	}
 
-	fmt.Println(str)
 	return nil
 }
 

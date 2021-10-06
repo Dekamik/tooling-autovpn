@@ -16,12 +16,13 @@ var options struct {
 
 	Regions	[]string `docopt:"REGION"`
 
-	Token       string `docopt:"-t,--token"`
-	AutoConnect	bool   `docopt:"-c,--connect"`
-	KeepOvpn    bool   `docopt:"-k,--keep-ovpn"`
-	ApplyOnAll  bool   `docopt:"-a,--all"`
-	PrintJson   bool   `docopt:"--json"`
-	AutoApprove bool   `docopt:"-y"`
+	Token        string `docopt:"-t,--token"`
+	AutoConnect	 bool   `docopt:"-c,--connect"`
+	KeepOvpn     bool   `docopt:"-k,--keep-ovpn"`
+	ApplyOnAll   bool   `docopt:"-a,--all"`
+	PrintJson    bool   `docopt:"--json"`
+    PrintHeaders bool   `docopt:"--headers"`
+	AutoApprove  bool   `docopt:"-y"`
 
 	PrintHelp    bool `docopt:"-h,--help"`
 	PrintVersion bool `docopt:"--version"`
@@ -38,8 +39,8 @@ Usage:
   autovpn create [-cvy] [-t TOKEN | --token TOKEN] REGION ...
   autovpn destroy [-kvy] [-t TOKEN | --token TOKEN] REGION ...
   autovpn purge [-avy] [-t TOKEN | --token TOKEN]
-  autovpn regions [-v] [--json]
-  autovpn status [-av] [--json]
+  autovpn regions [-v] [--json | --headers]
+  autovpn status [-av] [--json | --headers]
   autovpn -h | --help
   autovpn --version
 
@@ -59,6 +60,7 @@ Options:
   -k --keep-ovpn          Keep .ovpn-options.
   -a --all				  Run command on all servers on your account, not only those associated with your computer.
   --json                  Print as JSON.
+  --headers				  Print headers
   -y                      Auto-approve.
   -v --verbose            Print more text.
   -h --help               Show this screen.
