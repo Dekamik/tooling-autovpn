@@ -1,51 +1,22 @@
 package main
 
-import (
-    "context"
-    "github.com/hashicorp/terraform-exec/tfexec"
-    "github.com/hashicorp/terraform-exec/tfinstall"
-    "io/ioutil"
-    "os"
-)
-
 func tfApply() error {
-    tf := getTerraform()
-
-    initErr := tf.Init(context.Background(), tfexec.Upgrade(true))
-    if initErr != nil {
-        return initErr
-    }
-
-    applyErr := tf.Apply(context.Background())
-    if applyErr != nil {
-        return applyErr
-    }
-
-    return nil
+    _ = run("dpush ~/.autovpn/")
+    err := run("terraform apply ~/.autovpn/.terraform/tfplan")
+    _ = run("dpop")
+    return err
 }
 
-func tfPlan() {
-    // Use normal exec
+func tfInit() error {
+    _ = run("dpush ~/.autovpn/")
+    err := run("terraform init")
+    _ = run("dpop")
+    return err
 }
 
-func getTerraform() *tfexec.Terraform {
-    tmpDir, err := ioutil.TempDir("", "tfinstall")
-    if err != nil {
-        panic(err)
-    }
-    defer os.RemoveAll(tmpDir)
-
-    execPath, err := tfinstall.Find(context.Background(), tfinstall.LatestVersion(tmpDir, false))
-    if err != nil {
-        panic(err)
-    }
-
-    homeDir, _ := os.UserHomeDir()
-    workingDir := homeDir + "/.autovpn/"
-    tf, err := tfexec.NewTerraform(workingDir, execPath)
-    if err != nil {
-        panic(err)
-    }
-
-    return tf
+func tfPlan() error {
+    _ = run("dpush ~/.autovpn/")
+    err := run("terraform plan -out ~/.autovpn/.terraform/tfplan")
+    _ = run("dpop")
+    return err
 }

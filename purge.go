@@ -16,11 +16,23 @@ func purge(token string) error {
         return removeErr
     }
 
-    if filesRemoved != 0 {
-        err := tfApply()
-        if err != nil {
-            return err
-        }
+    if filesRemoved == 0 {
+        return nil
+    }
+
+    initErr := tfInit()
+    if initErr != nil {
+        return initErr
+    }
+
+    planErr := tfPlan()
+    if planErr != nil {
+        return planErr
+    }
+
+    applyErr := tfApply()
+    if applyErr != nil {
+        return applyErr
     }
 
     return nil

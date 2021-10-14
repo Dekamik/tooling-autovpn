@@ -100,11 +100,23 @@ func create(token string) error {
         return createErr
     }
 
-    if createdFiles != 0 {
-        err := tfApply()
-        if err != nil {
-            return err
-        }
+    if createdFiles == 0 {
+        return nil
+    }
+
+    initErr := tfInit()
+    if initErr != nil {
+        return initErr
+    }
+
+    planErr := tfPlan()
+    if planErr != nil {
+        return planErr
+    }
+
+    applyErr := tfApply()
+    if applyErr != nil {
+        return applyErr
     }
 
     return nil
