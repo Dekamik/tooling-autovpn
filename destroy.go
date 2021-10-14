@@ -12,9 +12,16 @@ func destroy(token string) error {
         files[i] = fmt.Sprintf(homeDir + "/.autovpn/%s.tf", r)
     }
 
-    removeErr := removeFiles(files)
+    filesRemoved, removeErr := removeFiles(files)
     if removeErr != nil {
         return removeErr
+    }
+
+    if filesRemoved != 0 {
+        err := tfApply()
+        if err != nil {
+            return err
+        }
     }
 
     return nil

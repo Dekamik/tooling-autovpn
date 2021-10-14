@@ -6,7 +6,8 @@ import (
     "path/filepath"
 )
 
-func removeFiles(files []string) error {
+func removeFiles(files []string) (int, error) {
+    var filesRemoved = 0
     summary := make([][]string, len(files))
     if options.Verbose {
         defer printTable(summary)
@@ -17,15 +18,16 @@ func removeFiles(files []string) error {
             removeErr := os.Remove(file)
             if removeErr != nil {
                 summary[i] = []string { file, "Error" }
-                return removeErr
+                return filesRemoved, removeErr
             }
             summary[i] = []string { file, "Removed" }
+            filesRemoved++
         } else {
             summary[i] = []string { file, "Not found" }
         }
     }
 
-    return nil
+    return filesRemoved, nil
 }
 
 func find(root, ext string) []string {

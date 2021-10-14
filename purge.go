@@ -1,6 +1,8 @@
 package main
 
-import "os"
+import (
+    "os"
+)
 
 func purge(token string) error {
     homeDir, _ := os.UserHomeDir()
@@ -9,9 +11,16 @@ func purge(token string) error {
         return nil
     }
 
-    removeErr := removeFiles(files)
+    filesRemoved, removeErr := removeFiles(files)
     if removeErr != nil {
         return removeErr
+    }
+
+    if filesRemoved != 0 {
+        err := tfApply()
+        if err != nil {
+            return err
+        }
     }
 
     return nil

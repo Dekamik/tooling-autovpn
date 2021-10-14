@@ -52,7 +52,8 @@ func writeFile(instance Instance) (string, error) {
     return filePath, nil
 }
 
-func createFiles(instances []Instance) error {
+func createFiles(instances []Instance) (int, error) {
+    var createdFiles = 0
     summary := make([][]string, len(options.Regions))
     if options.Verbose {
         defer printTable(summary)
@@ -62,12 +63,13 @@ func createFiles(instances []Instance) error {
         fileName, createErr := writeFile(instance)
         if createErr != nil {
             summary[i] = []string { fileName, "Error" }
-            return createErr
+            return createdFiles, createErr
         }
         summary[i] = []string { fileName, "Created" }
+        createdFiles++
     }
 
-    return nil
+    return createdFiles, nil
 }
 
 func create(token string) error {
@@ -93,9 +95,16 @@ func create(token string) error {
         })
     }
 
-    createErr := createFiles(instances)
+    createdFiles, createErr := createFiles(instances)
     if createErr != nil {
         return createErr
+    }
+
+    if createdFiles != 0 {
+        err := tfApply()
+        if err != nil {
+            return err
+        }
     }
 
     return nil
