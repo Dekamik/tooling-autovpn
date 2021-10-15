@@ -18,7 +18,7 @@ type Instance struct {
 }
 
 var tfTemplate = `module "{{.Name}}" {
-  source = "git@github.com:Dekamik/vpn-modules.git//vpn-server?ref=v0.1.1"
+  source = "git@github.com:Dekamik/vpn-modules.git//vpn-server?ref=v0.2.0"
 
   token = "{{.Token}}"
   public_keys = [
