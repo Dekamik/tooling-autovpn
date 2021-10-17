@@ -1,7 +1,6 @@
 package main
 
 import (
-    "fmt"
     "os"
     "strings"
 )
@@ -12,8 +11,6 @@ func purge() error {
     if len(files) == 0 {
         return nil
     }
-
-    fmt.Println(files)
 
     for i, file := range files {
         if strings.Contains(file, "/.autovpn/main.tf") {
