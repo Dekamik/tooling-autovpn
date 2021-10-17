@@ -97,9 +97,11 @@ func create() error {
         return nil
     }
 
-    initErr := tfInit()
-    if initErr != nil {
-        return initErr
+    if _, statErr := os.Stat(fmt.Sprintf("%s/.autovpn/terraform.tfstate", homeDir)); os.IsNotExist(statErr) {
+        initErr := tfInit()
+        if initErr != nil {
+            return initErr
+        }
     }
 
     planErr := tfPlan()
