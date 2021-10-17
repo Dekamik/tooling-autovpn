@@ -15,12 +15,13 @@ var options struct {
 
     Regions	[]string `docopt:"REGION"`
 
-    AutoConnect	bool   `docopt:"-c,--connect"`
-    KeepOvpn    bool   `docopt:"-k,--keep-ovpn"`
     ApplyOnAll  bool   `docopt:"-a,--all"`
-    PrintJson   bool   `docopt:"--json"`
-    NoHeaders   bool   `docopt:"--no-headers"`
     AutoApprove bool   `docopt:"-y,--auto-approve"`
+    AutoConnect	bool   `docopt:"-c,--connect"`
+    Initialize  bool   `docopt:"--init"`
+    KeepOvpn    bool   `docopt:"-k,--keep-ovpn"`
+    NoHeaders   bool   `docopt:"--no-headers"`
+    PrintJson   bool   `docopt:"--json"`
 
     PrintHelp    bool `docopt:"-h,--help"`
     PrintVersion bool `docopt:"--version"`
@@ -35,7 +36,7 @@ var config struct {
 var usage = `Provisions and destroys VPN servers.
 
 Usage: 
-  autovpn create [-cvy] REGION ...
+  autovpn create [-cvy] [--init] REGION ...
   autovpn destroy [-kvy] REGION ...
   autovpn purge [-avy]
   autovpn regions [-v] [--json | --no-headers]
@@ -57,6 +58,7 @@ Options:
   -c --connect            Auto-connect with OpenVPN. (requires root privileges)
   -k --keep-ovpn          Keep .ovpn-options.
   -a --all				  Run command on all servers on your account, not only those associated with your computer.
+  --init                  Run terraform init
   --json                  Print as JSON.
   --no-headers			  Suppress printout headers
   -y --auto-approve       Approve changes automatically.

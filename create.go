@@ -66,8 +66,6 @@ func createFiles(instances []Instance) (int, error) {
 
 func create() error {
     var instances []Instance
-    hostName, _ := os.Hostname()
-    hostName = hostName[1:]
     homeDir, _ := os.UserHomeDir()
 
     sshFile, openErr := os.Open(homeDir + "/.ssh/id_rsa.pub")
@@ -97,7 +95,8 @@ func create() error {
         return nil
     }
 
-    if _, statErr := os.Stat(fmt.Sprintf("%s/.autovpn/terraform.tfstate", homeDir)); os.IsNotExist(statErr) {
+    _, statErr := os.Stat(fmt.Sprintf("%s/.autovpn/terraform.tfstate", homeDir));
+    if options.Initialize || os.IsNotExist(statErr) {
         initErr := tfInit()
         if initErr != nil {
             return initErr

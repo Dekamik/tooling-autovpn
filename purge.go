@@ -1,7 +1,9 @@
 package main
 
 import (
+    "fmt"
     "os"
+    "strings"
 )
 
 func purge() error {
@@ -9,6 +11,19 @@ func purge() error {
     files := find(homeDir + "/.autovpn/", ".tf")
     if len(files) == 0 {
         return nil
+    }
+
+    fmt.Println(files)
+
+    for i, file := range files {
+        if strings.Contains(file, "/.autovpn/main.tf") {
+            if i == len(files) - 1 {
+                files = files[:len(files) - 1]
+                continue
+            }
+            files[i] = files[len(files) - 1]
+            files = files[:len(files) - 1]
+        }
     }
 
     filesRemoved, removeErr := removeFiles(files)
