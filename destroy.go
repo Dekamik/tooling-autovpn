@@ -5,7 +5,7 @@ import (
     "os"
 )
 
-func destroy(token string) error {
+func destroy() error {
     homeDir, _ := os.UserHomeDir()
     files := make([]string, len(options.Regions))
     for i, r := range options.Regions {
@@ -19,11 +19,6 @@ func destroy(token string) error {
 
     if filesRemoved == 0 {
         return nil
-    }
-
-    initErr := tfInit()
-    if initErr != nil {
-        return initErr
     }
 
     planErr := tfPlan()

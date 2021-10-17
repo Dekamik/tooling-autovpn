@@ -5,8 +5,11 @@ import (
     "fmt"
     "os"
     "strings"
-    "text/template"
 )
+
+type Main struct {
+    Token string
+}
 
 type Instance struct {
     Name      string
@@ -17,50 +20,39 @@ type Instance struct {
     Type      string
 }
 
-var tfTemplate = `module "{{.Name}}" {
-  source = "git@github.com:Dekamik/vpn-modules.git//vpn-server?ref=v0.2.0"
-
-  token = "{{.Token}}"
-  public_keys = [
-    "{{.PublicKey}}"
-  ]
-
-  name = "{{.Hostname}}-{{.Name}}"
-  region = "{{.Region}}"
-  type = "{{.Type}}"
-}
-`
-
-func writeFile(instance Instance) (string, error) {
-    homeDir, _ := os.UserHomeDir()
-    mkDirErr := os.MkdirAll(homeDir + "/.autovpn", 0777)
-    check(mkDirErr)
-
-    tmpl, tmplErr := template.New("tfmodule").Parse(tfTemplate)
-    if tmplErr != nil { return "", tmplErr }
-
-    filePath := fmt.Sprintf("%s/.autovpn/%s.tf", homeDir, instance.Name)
-    file, fileErr := os.Create(filePath)
-    if fileErr != nil { return filePath, tmplErr }
-    writer := bufio.NewWriter(file)
-
-    execErr := tmpl.Execute(writer, instance)
-    if execErr != nil { return filePath, execErr }
-    flushErr := writer.Flush()
-    if flushErr != nil { return filePath, flushErr }
-
-    return filePath, nil
-}
-
 func createFiles(instances []Instance) (int, error) {
     var createdFiles = 0
-    summary := make([][]string, len(options.Regions))
+    summary := make([][]string, len(options.Regions) + 1)
     if options.Verbose {
         defer printTable(summary)
     }
 
+    homeDir, _ := os.UserHomeDir()
+    mkDirErr := os.MkdirAll(homeDir + "/.autovpn", 0777)
+    check(mkDirErr)
+
+    mainStruct := Main{Token: instances[0].Token}
+    mainReceiver := TemplateReceiver{
+        FilePath:     fmt.Sprintf("%s/.autovpn/main.tf", homeDir),
+        TemplateName: "main",
+        TemplateArgs: mainStruct,
+    }
+    mainFile, mainCreateErr := writeFile(mainReceiver)
+    if mainCreateErr != nil {
+        summary[0] = []string { mainFile, "Error" }
+        return 0, mainCreateErr
+    } else {
+        summary[0] = []string { mainFile, "Created" }
+        createdFiles++
+    }
+
     for i, instance := range instances {
-        fileName, createErr := writeFile(instance)
+        args := TemplateReceiver{
+            FilePath:     fmt.Sprintf("%s/.autovpn/%s.tf", homeDir, instance.Name),
+            TemplateName: "vpn",
+            TemplateArgs: instance,
+        }
+        fileName, createErr := writeFile(args)
         if createErr != nil {
             summary[i] = []string { fileName, "Error" }
             return createdFiles, createErr
@@ -72,9 +64,10 @@ func createFiles(instances []Instance) (int, error) {
     return createdFiles, nil
 }
 
-func create(token string) error {
+func create() error {
     var instances []Instance
     hostName, _ := os.Hostname()
+    hostName = hostName[1:]
     homeDir, _ := os.UserHomeDir()
 
     sshFile, openErr := os.Open(homeDir + "/.ssh/id_rsa.pub")
@@ -87,8 +80,8 @@ func create(token string) error {
     for _, region := range options.Regions {
         instances = append(instances, Instance{
             Name:      region,
-            Hostname:  hostName,
-            Token:     token,
+            Hostname:  config.Hostname,
+            Token:     config.Token,
             PublicKey: publicKey,
             Region:    region,
             Type:      "g6-nanode-1",

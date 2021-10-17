@@ -1,22 +1,24 @@
 package main
 
+import (
+    "fmt"
+    "os"
+)
+
 func tfApply() error {
-    _ = run("dpush ~/.autovpn/")
-    err := run("terraform apply ~/.autovpn/.terraform/tfplan")
-    _ = run("dpop")
+    homeDir, _ := os.UserHomeDir()
+    err := run(fmt.Sprintf("terraform -chdir=%s/.autovpn/ apply %s/.autovpn/.terraform/tfplan", homeDir, homeDir))
     return err
 }
 
 func tfInit() error {
-    _ = run("dpush ~/.autovpn/")
-    err := run("terraform init")
-    _ = run("dpop")
+    homeDir, _ := os.UserHomeDir()
+    err := run(fmt.Sprintf("terraform -chdir=%s/.autovpn/ init", homeDir))
     return err
 }
 
 func tfPlan() error {
-    _ = run("dpush ~/.autovpn/")
-    err := run("terraform plan -out ~/.autovpn/.terraform/tfplan")
-    _ = run("dpop")
+    homeDir, _ := os.UserHomeDir()
+    err := run(fmt.Sprintf("terraform -chdir=%s/.autovpn/ plan -out %s/.autovpn/.terraform/tfplan", homeDir, homeDir))
     return err
 }

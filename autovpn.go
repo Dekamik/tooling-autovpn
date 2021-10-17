@@ -21,10 +21,8 @@ func main() {
     if options.CreateCmd {
         validationErr := validateRegions(options.Regions)
         checkGracefully(validationErr)
-        token, tokenErr := findToken()
-        checkGracefully(tokenErr)
 
-        createErr := create(token)
+        createErr := create()
         check(createErr)
 
         os.Exit(0)
@@ -33,20 +31,15 @@ func main() {
     if options.DestroyCmd {
         validationErr := validateRegions(options.Regions)
         checkGracefully(validationErr)
-        token, tokenErr := findToken()
-        checkGracefully(tokenErr)
 
-        destroyErr := destroy(token)
+        destroyErr := destroy()
         check(destroyErr)
 
         os.Exit(0)
     }
 
     if options.PurgeCmd {
-        token, tokenErr := findToken()
-        checkGracefully(tokenErr)
-
-        purgeErr := purge(token)
+        purgeErr := purge()
         check(purgeErr)
 
         os.Exit(0)
@@ -60,10 +53,7 @@ func main() {
     }
 
     if options.StatusCmd {
-        token, tokenErr := findToken()
-        checkGracefully(tokenErr)
-
-        err := showStatus(token)
+        err := showStatus()
         check(err)
 
         os.Exit(0)

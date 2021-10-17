@@ -1,5 +1,5 @@
 package main
 
-func showStatus(token string) error {
+func showStatus() error {
     return nil
 }

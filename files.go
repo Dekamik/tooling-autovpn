@@ -1,10 +1,69 @@
 package main
 
 import (
+    "bufio"
     "io/fs"
     "os"
     "path/filepath"
+    "text/template"
 )
+
+var tfMainTemplate = `terraform {
+  required_providers {
+    linode = {
+      source = "linode/linode"
+      version = "1.16.0"
+    }
+  }
+}
+
+provider "linode" {
+  token = "{{.Token}}"
+}
+`
+
+var tfVpnTemplate = `module "{{.Name}}" {
+  source = "git@github.com:Dekamik/vpn-modules.git//vpn-server?ref=v0.2.0"
+
+  token = "{{.Token}}"
+  public_keys = {
+    "{{.Hostname}}" = "{{.PublicKey}}"
+  }
+
+  name = "{{.Hostname}}-{{.Name}}"
+  region = "{{.Region}}"
+  type = "{{.Type}}"
+}
+`
+
+var templates = map[string]*template.Template {
+    "main": template.Must(template.New("main").Parse(tfMainTemplate)),
+    "vpn": template.Must(template.New("vpn").Parse(tfVpnTemplate)),
+}
+
+type TemplateReceiver struct {
+    FilePath string
+    TemplateName string
+    TemplateArgs interface{}
+}
+
+func writeFile(receiver TemplateReceiver) (string, error) {
+    file, fileErr := os.Create(receiver.FilePath)
+    if fileErr != nil { return receiver.FilePath, fileErr }
+    writer := bufio.NewWriter(file)
+
+    writeErr := templates[receiver.TemplateName].Execute(writer, receiver.TemplateArgs)
+    if writeErr != nil {
+        return receiver.FilePath, writeErr
+    }
+
+    flushErr := writer.Flush()
+    if flushErr != nil {
+        return receiver.FilePath, flushErr
+    }
+
+    return receiver.FilePath, nil
+}
 
 func removeFiles(files []string) (int, error) {
     var filesRemoved = 0

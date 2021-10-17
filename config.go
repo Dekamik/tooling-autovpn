@@ -1,7 +1,6 @@
 package main
 
 import (
-    "errors"
     "github.com/docopt/docopt-go"
     "github.com/spf13/viper"
     "strings"
@@ -16,7 +15,6 @@ var options struct {
 
     Regions	[]string `docopt:"REGION"`
 
-    Token       string `docopt:"-t,--token"`
     AutoConnect	bool   `docopt:"-c,--connect"`
     KeepOvpn    bool   `docopt:"-k,--keep-ovpn"`
     ApplyOnAll  bool   `docopt:"-a,--all"`
@@ -30,15 +28,16 @@ var options struct {
 }
 
 var config struct {
-    Token string `mapstructure:"token"`
+    Hostname string `mapstructure:"hostname"`
+    Token    string `mapstructure:"token"`
 }
 
 var usage = `Provisions and destroys VPN servers.
 
 Usage: 
-  autovpn create [-cvy] [-t TOKEN | --token TOKEN] REGION ...
-  autovpn destroy [-kvy] [-t TOKEN | --token TOKEN] REGION ...
-  autovpn purge [-avy] [-t TOKEN | --token TOKEN]
+  autovpn create [-cvy] REGION ...
+  autovpn destroy [-kvy] REGION ...
+  autovpn purge [-avy]
   autovpn regions [-v] [--json | --no-headers]
   autovpn status [-av] [--json | --no-headers]
   autovpn -h | --help
@@ -55,7 +54,6 @@ Arguments:
   REGION  Linode region for server. Find avaiable regions by running "autovpn regions"
 
 Options:
-  -t TOKEN --token TOKEN  API token for your Linode account
   -c --connect            Auto-connect with OpenVPN. (requires root privileges)
   -k --keep-ovpn          Keep .ovpn-options.
   -a --all				  Run command on all servers on your account, not only those associated with your computer.
@@ -90,14 +88,4 @@ func readConfig() error {
     marshalErr := viper.Unmarshal(&config)
     if marshalErr != nil { return marshalErr }
     return nil
-}
-
-func findToken() (string, error) {
-    if len(config.Token) != 0 {
-        return config.Token, nil
-    }
-    if len(options.Token) != 0 {
-        return options.Token, nil
-    }
-    return "", errors.New("No API token found. Try autovpn --help or check README.md ")
 }

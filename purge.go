@@ -4,7 +4,7 @@ import (
     "os"
 )
 
-func purge(token string) error {
+func purge() error {
     homeDir, _ := os.UserHomeDir()
     files := find(homeDir + "/.autovpn/", ".tf")
     if len(files) == 0 {
@@ -18,11 +18,6 @@ func purge(token string) error {
 
     if filesRemoved == 0 {
         return nil
-    }
-
-    initErr := tfInit()
-    if initErr != nil {
-        return initErr
     }
 
     planErr := tfPlan()
