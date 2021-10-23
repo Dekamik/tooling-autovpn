@@ -12,7 +12,7 @@ func ovpnConnect(configPath string) error {
     cmd := exec.Command("sudo", "openvpn", configPath)
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
-    fmt.Println("Connecting to VPN server... (root privileges required)")
+    fmt.Println("Opening VPN tunnel...")
     if startErr := cmd.Start(); startErr != nil {
         return startErr
     }
