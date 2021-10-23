@@ -2,7 +2,6 @@ package main
 
 import (
     "encoding/json"
-    "errors"
     "fmt"
     "io"
     "io/ioutil"
@@ -54,22 +53,11 @@ func getRegions() ([]region, error) {
     return regions.Data, nil
 }
 
-func isRegion(str string, regions []region) bool {
-    for _, region := range regions {
-        if str == region.Id {
-            return true
-        }
-    }
-    return false
-}
-
 func showRegions() error {
-    verbose("Fetching regions...")
     regions, regionsErr := getRegions()
     if regionsErr != nil {
         return regionsErr
     }
-    verboseln("OK")
 
     var str = ""
     if options.PrintJson {
@@ -88,27 +76,6 @@ func showRegions() error {
             matrix = append([][]string{{"Region ID", "Country Code"}}, matrix...)
         }
         printTable(matrix)
-    }
-
-    return nil
-}
-
-func validateRegions(regionArgs []string) error {
-    if len(regionArgs) == 0 {
-        return errors.New("No region specified ")
-    }
-
-    verbose("Fetching regions...")
-    regions, regionsErr := getRegions()
-    if regionsErr != nil {
-        return regionsErr
-    }
-    verboseln("OK")
-
-    for _, region := range regionArgs {
-        if !isRegion(region, regions) {
-            return errors.New(fmt.Sprintf("Illegal region \"%s\"", region))
-        }
     }
 
     return nil

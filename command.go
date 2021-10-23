@@ -7,8 +7,6 @@ import (
 )
 
 func run(command string) error {
-    verbosef("Running command: %s\n", command)
-    
     cmdArgs := strings.Fields(command)
     cmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
     cmd.Stdin = os.Stdin

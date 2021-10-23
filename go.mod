@@ -28,6 +28,8 @@ require (
 	github.com/jmespath/go-jmespath v0.0.0-20160202185014-0b12d6b521d8 // indirect
 	github.com/klauspost/compress v1.11.2 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
+	github.com/mattn/go-isatty v0.0.12 // indirect
+	github.com/mattn/go-tty v0.0.3 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.2 // indirect

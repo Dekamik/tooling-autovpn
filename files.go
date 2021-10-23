@@ -33,6 +33,7 @@ var tfVpnTemplate = `module "{{.Name}}" {
   name = "{{.Hostname}}-{{.Name}}"
   region = "{{.Region}}"
   type = "{{.Type}}"
+  download_dir = "{{.DownloadDir}}"
 }
 `
 
@@ -68,9 +69,6 @@ func writeFile(receiver TemplateReceiver) (string, error) {
 func removeFiles(files []string) (int, error) {
     var filesRemoved = 0
     summary := make([][]string, len(files))
-    if options.Verbose {
-        defer printTable(summary)
-    }
 
     for i, file := range files {
         if _, err := os.Stat(file); err == nil {

@@ -7,64 +7,42 @@ import (
 )
 
 var options struct {
-    CreateCmd  bool `docopt:"create"`
-    DestroyCmd bool `docopt:"destroy"`
-    PurgeCmd   bool `docopt:"purge"`
-    RegionsCmd bool `docopt:"regions"`
-    StatusCmd  bool `docopt:"status"`
+    ConfigPath string `docopt:"--config"`
+    Region     string `docopt:"REGION"`
 
-    Regions	[]string `docopt:"REGION"`
-
-    ApplyOnAll  bool   `docopt:"-a,--all"`
-    AutoApprove bool   `docopt:"-y,--auto-approve"`
-    AutoConnect	bool   `docopt:"-c,--connect"`
-    Initialize  bool   `docopt:"--init"`
-    KeepOvpn    bool   `docopt:"-k,--keep-ovpn"`
-    NoHeaders   bool   `docopt:"--no-headers"`
-    PrintJson   bool   `docopt:"--json"`
+    ShowRegions bool `docopt:"--show-regions"`
+    NoHeaders   bool `docopt:"--no-headers"`
+    PrintJson   bool `docopt:"--json"`
 
     PrintHelp    bool `docopt:"-h,--help"`
     PrintVersion bool `docopt:"--version"`
-    Verbose		 bool `docopt:"-v,--verbose"`
 }
 
 var config struct {
-    Hostname string `mapstructure:"hostname"`
-    Token    string `mapstructure:"token"`
+    Hostname   string `mapstructure:"hostname"`
+    Token      string `mapstructure:"token"`
+    WorkingDir string `mapstructure:"workingdir"`
+    SshPath    string `mapstructure:"sshpath"`
 }
 
-var usage = `Provisions and destroys VPN servers.
+var usage = `Tool for provisioning and connecting to temporary VPN servers.
+These servers get deleted when the connection is exited by pressing 'q' during the session.
 
 Usage: 
-  autovpn create [-cvy] [--init] REGION ...
-  autovpn destroy [-kvy] REGION ...
-  autovpn purge [-avy]
-  autovpn regions [-v] [--json | --no-headers]
-  autovpn status [-av] [--json | --no-headers]
+  autovpn [--config=<config>] REGION
+  autovpn --show-regions [--json | --no-headers]
   autovpn -h | --help
   autovpn --version
-
-Commands:
-  create   Create server(s) in region(s)
-  destroy  Destroy server(s) in region(s)
-  purge    Destroy all servers across all regions
-  regions  List all available regions
-  status   VPN server status
 
 Arguments:
   REGION  Linode region for server. Find avaiable regions by running "autovpn regions"
 
 Options:
-  -c --connect            Auto-connect with OpenVPN. (requires root privileges)
-  -k --keep-ovpn          Keep .ovpn-options.
-  -a --all				  Run command on all servers on your account, not only those associated with your computer.
-  --init                  Run terraform init
-  --json                  Print as JSON.
-  --no-headers			  Suppress printout headers
-  -y --auto-approve       Approve changes automatically.
-  -v --verbose            Print more text.
-  -h --help               Show this screen.
-  --version               Show version.`
+  --show-regions  Show available regions.
+  --json          Print as JSON.
+  --no-headers	  Suppress printout headers
+  -h --help       Show this screen.
+  --version       Show version.`
 
 func bindOptions(argv []string, semver string) error {
     opts, _ := docopt.ParseArgs(usage, argv, semver)
@@ -77,6 +55,7 @@ func bindOptions(argv []string, semver string) error {
 
 func readConfig() error {
     viper.AddConfigPath("$HOME/.autovpn")
+    viper.AddConfigPath(options.ConfigPath)
     viper.SetConfigName("config")
     viper.SetConfigType("toml")
     readErr := viper.ReadInConfig()
