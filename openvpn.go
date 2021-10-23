@@ -12,6 +12,7 @@ func ovpnConnect(configPath string) error {
     cmd := exec.Command("sudo", "openvpn", configPath)
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
+    fmt.Println("Connecting to VPN server... (root privileges required)")
     if startErr := cmd.Start(); startErr != nil {
         return startErr
     }
@@ -28,7 +29,7 @@ func ovpnConnect(configPath string) error {
 
     go func() {
         s := <-sigc
-        fmt.Printf("\n%s recieved, killing session...\n", s)
+        fmt.Printf("\n%s signal recieved, killing session...\n", s)
         _ = cmd.Process.Kill()
         waiting = false
     }()
