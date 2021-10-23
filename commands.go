@@ -5,8 +5,21 @@ import (
     "os"
     "os/exec"
     "os/signal"
+    "strings"
     "syscall"
 )
+
+func tfApply() error {
+    return run(fmt.Sprintf("terraform -chdir=%s apply %s/.terraform/tfplan", config.WorkingDir, config.WorkingDir))
+}
+
+func tfInit() error {
+    return run(fmt.Sprintf("terraform -chdir=%s init", config.WorkingDir))
+}
+
+func tfPlan() error {
+    return run(fmt.Sprintf("terraform -chdir=%s plan -out %s/.terraform/tfplan", config.WorkingDir, config.WorkingDir))
+}
 
 func ovpnConnect(configPath string) error {
     cmd := exec.Command("sudo", "openvpn", configPath)
@@ -35,6 +48,21 @@ func ovpnConnect(configPath string) error {
     }()
 
     for waiting {}
+
+    return nil
+}
+
+func run(command string) error {
+    cmdArgs := strings.Fields(command)
+    cmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
+    cmd.Stdin = os.Stdin
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+
+    err := cmd.Run()
+    if err != nil {
+        return err
+    }
 
     return nil
 }
