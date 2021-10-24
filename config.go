@@ -6,9 +6,10 @@ import (
     "strings"
 )
 
-var options struct {
+type Options struct {
     ConfigPath string `docopt:"--config"`
     Region     string `docopt:"REGION"`
+    ConnectTo  string `docopt:"-c,--connect"`
 
     ShowRegions bool `docopt:"--show-regions"`
     NoHeaders   bool `docopt:"--no-headers"`
@@ -18,18 +19,27 @@ var options struct {
     PrintVersion bool `docopt:"--version"`
 }
 
-var config struct {
-    Hostname   string `mapstructure:"hostname"`
-    Token      string `mapstructure:"token"`
-    WorkingDir string `mapstructure:"workingdir"`
-    SshPath    string `mapstructure:"sshpath"`
+type Profile struct {
+    Path string `mapstructure:"path"`
 }
+
+type Config struct {
+    Hostname   string             `mapstructure:"hostname"`
+    Token      string             `mapstructure:"token"`
+    WorkingDir string             `mapstructure:"workingdir"`
+    SshPath    string             `mapstructure:"sshpath"`
+    Profiles   map[string]Profile `mapstructure:"profiles"`
+}
+
+var options Options
+var config Config
 
 var usage = `Tool for provisioning and connecting to a temporary VPN server.
 This server gets destroyed when the connection is terminated.
 
 Usage: 
   autovpn [--config=<config>] REGION
+  autovpn -c <profile>
   autovpn --show-regions [--json | --no-headers]
   autovpn -h | --help
   autovpn --version
@@ -38,6 +48,7 @@ Arguments:
   REGION  Linode region for server. Find avaiable regions by running "autovpn regions"
 
 Options:
+  -c <profile>    Connect to pre-defined VPN profile
   --show-regions  Show available regions.
   --json          Print as JSON.
   --no-headers	  Suppress printout headers
