@@ -45,7 +45,7 @@ func ovpnConnect(configPath string, stdin bool) error {
 
     go func() {
         s := <-sigc
-        fmt.Printf("\n%s signal recieved, killing session...\n", s)
+        fmt.Printf("%s signal recieved, killing session...\n", strings.Title(s.String()))
         _ = cmd.Process.Kill()
         waiting = false
     }()
