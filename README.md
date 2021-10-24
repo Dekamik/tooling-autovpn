@@ -19,7 +19,7 @@ Inside that file you will define some settings as follows:
 
 ```toml
 hostname = "<your-hostname>"
-sshpath = "<path/to/public/ssh/key>"
+sshpath = "/home/<youruser>/.ssh/id_ed25519.pub"
 token = "<your-linode-token>"
 workingdir = "/home/<youruser>/.autovpn/tmp"
 ```

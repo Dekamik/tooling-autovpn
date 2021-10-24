@@ -27,6 +27,7 @@ func main() {
     purgeErr := purge()
     check(purgeErr)
 
+    fmt.Printf("Deleting %s...", config.WorkingDir)
     rmErr := os.RemoveAll(config.WorkingDir)
     check(rmErr)
 }

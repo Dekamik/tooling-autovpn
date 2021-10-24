@@ -14,6 +14,8 @@ type region struct {
 }
 
 func getRegions() ([]region, error) {
+    fmt.Print("Downloading regions...")
+    defer fmt.Println("OK")
     type regionRes struct {
         Data []region `json:"data"`
     }

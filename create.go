@@ -57,6 +57,7 @@ func createFiles(instances []Instance) (int, error) {
 }
 
 func create() error {
+    fmt.Println("Creating VPN server...")
     var instances []Instance
 
     sshFile, openErr := os.Open(config.SshPath)

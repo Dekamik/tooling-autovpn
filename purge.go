@@ -1,10 +1,12 @@
 package main
 
 import (
+    "fmt"
     "strings"
 )
 
 func purge() error {
+    fmt.Println("Destroying VPN server...")
     files := find(config.WorkingDir, ".tf")
     if len(files) == 0 {
         return nil
