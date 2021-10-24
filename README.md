@@ -24,6 +24,25 @@ token = "<your-linode-token>"
 workingdir = "/home/<youruser>/.autovpn/tmp"
 ```
 
+### Additional configurations
+You can also define profile blocks for connecting to existing VPN servers with .ovpn files on your computer.
+Simply define the blocks as follows:
+
+```toml
+[profiles]
+  [profiles.home]
+  path = "/path/to/home/client.ovpn"
+  
+  [profiles.<any>]
+  path = "/path/to/any.ovpn"
+```
+
+With above configurations you simply call `autovpn -c <profile>` 
+where `<profile>` is the name you gave the profile block after the dot. 
+
+E.g. to connect to the `home` profile, call `autovpn -c home`. 
+The program will open the tunnel and forward stdin, stdout and stderr.
+
 ### Usage
 When all above is done, you can start using the command.
 
