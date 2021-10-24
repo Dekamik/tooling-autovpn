@@ -21,14 +21,19 @@ func tfPlan() error {
     return run(fmt.Sprintf("terraform -chdir=%s plan -out %s/.terraform/tfplan", config.WorkingDir, config.WorkingDir))
 }
 
-func ovpnConnect(configPath string) error {
+func ovpnConnect(configPath string, stdin bool) error {
     cmd := exec.Command("sudo", "openvpn", configPath)
+    if stdin {
+        cmd.Stdin = os.Stdin
+    }
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
     fmt.Println("Opening VPN tunnel...")
     if startErr := cmd.Start(); startErr != nil {
         return startErr
     }
+
+    var waiting = true
 
     sigc := make(chan os.Signal, 1)
     signal.Notify(sigc,
@@ -37,8 +42,6 @@ func ovpnConnect(configPath string) error {
         syscall.SIGTERM,
         syscall.SIGQUIT,
         os.Interrupt)
-
-    var waiting = true
 
     go func() {
         s := <-sigc
