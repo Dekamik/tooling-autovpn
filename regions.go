@@ -9,7 +9,7 @@ import (
 )
 
 type region struct {
-    Id string `json:"id"`
+    Id      string `json:"id"`
     Country string `json:"country"`
 }
 

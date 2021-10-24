@@ -25,8 +25,8 @@ var config struct {
     SshPath    string `mapstructure:"sshpath"`
 }
 
-var usage = `Tool for provisioning and connecting to temporary VPN servers.
-These servers get deleted when the connection is exited by pressing 'q' during the session.
+var usage = `Tool for provisioning and connecting to a temporary VPN server.
+This server gets destroyed when the connection is terminated.
 
 Usage: 
   autovpn [--config=<config>] REGION
