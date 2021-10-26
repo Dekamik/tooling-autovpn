@@ -33,10 +33,9 @@ func main() {
         check(connectToErr)
         os.Exit(0)
     }
-    
-    regionIsValid, regionErr := isRegionValid(options.Region)
-    check(regionErr)
-    if !regionIsValid {
+
+    if isValid, err := isRegionValid(options.Region); err != nil || !isValid {
+        check(err)
         fmt.Printf("Region %s is not a valid Linode region, exiting...\n", options.Region)
         os.Exit(1)
     }
