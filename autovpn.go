@@ -33,8 +33,7 @@ func main() {
         check(connectToErr)
         os.Exit(0)
     }
-
-
+    
     regionIsValid, regionErr := isRegionValid(options.Region)
     check(regionErr)
     if !regionIsValid {
