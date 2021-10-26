@@ -7,9 +7,8 @@ import (
 )
 
 type Options struct {
-    ConfigPath string `docopt:"--config"`
     Region     string `docopt:"REGION"`
-    ConnectTo  string `docopt:"-c,--connect"`
+    ConnectTo  string `docopt:"-c"`
 
     ShowRegions bool `docopt:"--show-regions"`
     NoHeaders   bool `docopt:"--no-headers"`
@@ -38,8 +37,8 @@ var usage = `Tool for provisioning and connecting to a temporary VPN server.
 This server gets destroyed when the connection is terminated.
 
 Usage: 
-  autovpn [--config=<config>] REGION
-  autovpn -c <profile>
+  autovpn REGION
+  autovpn -c PROFILE
   autovpn --show-regions [--json | --no-headers]
   autovpn -h | --help
   autovpn --version
@@ -48,7 +47,7 @@ Arguments:
   REGION  Linode region for server. Find avaiable regions by running "autovpn regions"
 
 Options:
-  -c <profile>    Connect to pre-defined VPN profile
+  -c PROFILE      Connect to pre-defined VPN profile
   --show-regions  Show available regions.
   --json          Print as JSON.
   --no-headers	  Suppress printout headers
@@ -57,27 +56,26 @@ Options:
 
 func bindOptions(argv []string, semver string) error {
     opts, _ := docopt.ParseArgs(usage, argv, semver)
-    bindErr := opts.Bind(&options)
-    if bindErr != nil {
-        return bindErr
+    err := opts.Bind(&options)
+    if err != nil {
+        return err
     }
     return nil
 }
 
 func readConfig() error {
     viper.AddConfigPath("$HOME/.autovpn")
-    viper.AddConfigPath(options.ConfigPath)
     viper.SetConfigName("config")
     viper.SetConfigType("toml")
-    readErr := viper.ReadInConfig()
-    if readErr != nil {
-        if strings.Contains(readErr.Error(), "Not Found") {
+    err := viper.ReadInConfig()
+    if err != nil {
+        if strings.Contains(err.Error(), "Not Found") {
             return nil
         }
-        return readErr
+        return err
     }
 
-    marshalErr := viper.Unmarshal(&config)
-    if marshalErr != nil { return marshalErr }
+    err = viper.Unmarshal(&config)
+    if err != nil { return err }
     return nil
 }

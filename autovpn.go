@@ -6,13 +6,13 @@ import (
 )
 
 func main() {
-    bindErr := bindOptions(os.Args[1:], "v1.0.0")
-    check(bindErr)
-    readErr := readConfig()
-    check(readErr)
+    err := bindOptions(os.Args[1:], "v1.0.0")
+    check(err)
+    err = readConfig()
+    check(err)
 
     if options.ShowRegions {
-        err := showRegions()
+        err = showRegions()
         check(err)
 
         os.Exit(0)
@@ -29,8 +29,8 @@ func main() {
 
         fmt.Printf("Connecting with file in %s\n", path)
 
-        connectToErr := ovpnConnect(path, true)
-        check(connectToErr)
+        err = ovpnConnect(path, true)
+        check(err)
         os.Exit(0)
     }
 
@@ -40,16 +40,16 @@ func main() {
         os.Exit(1)
     }
 
-    createErr := create()
-    check(createErr)
+    err = create()
+    check(err)
 
-    ovpnErr := ovpnConnect(fmt.Sprintf("%s/%s-%s.ovpn", config.WorkingDir, config.Hostname, options.Region), false)
-    check(ovpnErr)
+    err = ovpnConnect(fmt.Sprintf("%s/%s-%s.ovpn", config.WorkingDir, config.Hostname, options.Region), false)
+    check(err)
 
-    purgeErr := purge()
-    check(purgeErr)
+    err = purge()
+    check(err)
 
     fmt.Printf("Deleting %s...\n", config.WorkingDir)
-    rmErr := os.RemoveAll(config.WorkingDir)
-    check(rmErr)
+    err = os.RemoveAll(config.WorkingDir)
+    check(err)
 }

@@ -22,51 +22,39 @@ func getRegions() ([]region, error) {
 
     url := "https://api.linode.com/v4/regions"
     client := http.Client{}
-    req, requestErr := http.NewRequest(http.MethodGet, url, nil)
-    if requestErr != nil {
-        return nil, requestErr
-    }
+    req, err := http.NewRequest(http.MethodGet, url, nil)
+    if err != nil { return nil, err }
     req.Header.Set("User-Agent", "Dekamik/autovpn")
 
-    res, getErr := client.Do(req)
-    if getErr != nil {
-        return nil, getErr
-    }
+    res, err := client.Do(req)
+    if err != nil { return nil, err }
     if res.Body != nil {
         defer func(Body io.ReadCloser) {
-            err := Body.Close()
+            err = Body.Close()
             if err != nil {
                 panic(err)
             }
         }(res.Body)
     }
 
-    body, readErr := ioutil.ReadAll(res.Body)
-    if readErr != nil {
-        return nil, readErr
-    }
+    body, err := ioutil.ReadAll(res.Body)
+    if err != nil { return nil, err }
 
     regions := regionRes{}
-    jsonErr := json.Unmarshal(body, &regions)
-    if jsonErr != nil {
-        return nil, jsonErr
-    }
+    err = json.Unmarshal(body, &regions)
+    if err != nil { return nil, err }
 
     return regions.Data, nil
 }
 
 func showRegions() error {
-    regions, regionsErr := getRegions()
-    if regionsErr != nil {
-        return regionsErr
-    }
+    regions, err := getRegions()
+    if err != nil { return err }
 
     var str = ""
     if options.PrintJson {
-        jsonBytes, jsonErr := json.Marshal(regions)
-        if jsonErr != nil {
-            return jsonErr
-        }
+        jsonBytes, err := json.Marshal(regions)
+        if err != nil { return err }
         str = string(jsonBytes)
         fmt.Println(str)
     } else {
@@ -84,10 +72,8 @@ func showRegions() error {
 }
 
 func isRegionValid(regionName string) (bool, error) {
-    regions, regionsErr := getRegions()
-    if regionsErr != nil {
-        return false, regionsErr
-    }
+    regions, err := getRegions()
+    if err != nil { return false, err }
 
     for _, region := range regions {
         if region.Id == regionName {

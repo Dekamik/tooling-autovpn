@@ -24,8 +24,8 @@ type Instance struct {
 func createFiles(instances []Instance) (int, error) {
     var createdFiles = 0
 
-    mkDirErr := os.MkdirAll(config.WorkingDir, 0777)
-    check(mkDirErr)
+    err := os.MkdirAll(config.WorkingDir, 0777)
+    check(err)
 
     mainStruct := Main{Token: instances[0].Token}
     mainReceiver := TemplateReceiver{
@@ -33,9 +33,9 @@ func createFiles(instances []Instance) (int, error) {
         TemplateName: "main",
         TemplateArgs: mainStruct,
     }
-    _, mainCreateErr := writeFile(mainReceiver)
-    if mainCreateErr != nil {
-        return 0, mainCreateErr
+    _, err = writeFile(mainReceiver)
+    if err != nil {
+        return 0, err
     } else {
         createdFiles++
     }
@@ -46,9 +46,9 @@ func createFiles(instances []Instance) (int, error) {
             TemplateName: "vpn",
             TemplateArgs: instance,
         }
-        _, createErr := writeFile(args)
-        if createErr != nil {
-            return createdFiles, createErr
+        _, err := writeFile(args)
+        if err != nil {
+            return createdFiles, err
         }
         createdFiles++
     }
@@ -60,11 +60,11 @@ func create() error {
     fmt.Println("Creating VPN server...")
     var instances []Instance
 
-    sshFile, openErr := os.Open(config.SshPath)
-    if openErr != nil { return openErr }
+    sshFile, err := os.Open(config.SshPath)
+    if err != nil { return err }
     sshReader := bufio.NewReader(sshFile)
-    publicKey, readErr := sshReader.ReadString('\n')
-    if readErr != nil { return readErr }
+    publicKey, err := sshReader.ReadString('\n')
+    if err != nil { return err }
     publicKey = strings.TrimSuffix(publicKey, "\n")
 
     instances = append(instances, Instance{
@@ -77,29 +77,21 @@ func create() error {
         DownloadDir: config.WorkingDir,
     })
 
-    createdFiles, createErr := createFiles(instances)
-    if createErr != nil {
-        return createErr
-    }
+    createdFiles, err := createFiles(instances)
+    if err != nil { return err }
 
     if createdFiles == 0 {
         return nil
     }
 
-    initErr := tfInit()
-    if initErr != nil {
-        return initErr
-    }
+    err = tfInit()
+    if err != nil { return err }
 
-    planErr := tfPlan()
-    if planErr != nil {
-        return planErr
-    }
+    err = tfPlan()
+    if err != nil { return err }
 
-    applyErr := tfApply()
-    if applyErr != nil {
-        return applyErr
-    }
+    err = tfApply()
+    if err != nil { return err }
 
     return nil
 }

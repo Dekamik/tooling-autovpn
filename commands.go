@@ -29,8 +29,8 @@ func ovpnConnect(configPath string, stdin bool) error {
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
     fmt.Println("Opening VPN tunnel...")
-    if startErr := cmd.Start(); startErr != nil {
-        return startErr
+    if err := cmd.Start(); err != nil {
+        return err
     }
 
     var waiting = true
@@ -63,9 +63,7 @@ func run(command string) error {
     cmd.Stderr = os.Stderr
 
     err := cmd.Run()
-    if err != nil {
-        return err
-    }
+    if err != nil { return err }
 
     return nil
 }

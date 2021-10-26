@@ -49,19 +49,15 @@ type TemplateReceiver struct {
 }
 
 func writeFile(receiver TemplateReceiver) (string, error) {
-    file, fileErr := os.Create(receiver.FilePath)
-    if fileErr != nil { return receiver.FilePath, fileErr }
+    file, err := os.Create(receiver.FilePath)
+    if err != nil { return receiver.FilePath, err }
     writer := bufio.NewWriter(file)
 
-    writeErr := templates[receiver.TemplateName].Execute(writer, receiver.TemplateArgs)
-    if writeErr != nil {
-        return receiver.FilePath, writeErr
-    }
+    err = templates[receiver.TemplateName].Execute(writer, receiver.TemplateArgs)
+    if err != nil { return receiver.FilePath, err }
 
-    flushErr := writer.Flush()
-    if flushErr != nil {
-        return receiver.FilePath, flushErr
-    }
+    err = writer.Flush()
+    if err != nil { return receiver.FilePath, err }
 
     return receiver.FilePath, nil
 }
@@ -72,10 +68,10 @@ func removeFiles(files []string) (int, error) {
 
     for i, file := range files {
         if _, err := os.Stat(file); err == nil {
-            removeErr := os.Remove(file)
-            if removeErr != nil {
+            err = os.Remove(file)
+            if err != nil {
                 summary[i] = []string { file, "Error" }
-                return filesRemoved, removeErr
+                return filesRemoved, err
             }
             summary[i] = []string { file, "Removed" }
             filesRemoved++

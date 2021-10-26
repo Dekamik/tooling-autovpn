@@ -23,24 +23,18 @@ func purge() error {
         }
     }
 
-    filesRemoved, removeErr := removeFiles(files)
-    if removeErr != nil {
-        return removeErr
-    }
+    filesRemoved, err := removeFiles(files)
+    if err != nil { return err }
 
     if filesRemoved == 0 {
         return nil
     }
 
-    planErr := tfPlan()
-    if planErr != nil {
-        return planErr
-    }
+    err = tfPlan()
+    if err != nil { return err }
 
-    applyErr := tfApply()
-    if applyErr != nil {
-        return applyErr
-    }
+    err = tfApply()
+    if err != nil { return err }
 
     return nil
 }
