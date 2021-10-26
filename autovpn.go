@@ -34,16 +34,24 @@ func main() {
         os.Exit(0)
     }
 
+
+    regionIsValid, regionErr := isRegionValid(options.Region)
+    check(regionErr)
+    if !regionIsValid {
+        fmt.Printf("Region %s is not a valid Linode region, exiting...\n", options.Region)
+        os.Exit(1)
+    }
+
     createErr := create()
     check(createErr)
 
-    ovpnErr := ovpnConnect(fmt.Sprintf("%s/%s-%s.ovpn", config.WorkingDir, config.Hostname, options.Region), true)
+    ovpnErr := ovpnConnect(fmt.Sprintf("%s/%s-%s.ovpn", config.WorkingDir, config.Hostname, options.Region), false)
     check(ovpnErr)
 
     purgeErr := purge()
     check(purgeErr)
 
-    fmt.Printf("Deleting %s...", config.WorkingDir)
+    fmt.Printf("Deleting %s...\n", config.WorkingDir)
     rmErr := os.RemoveAll(config.WorkingDir)
     check(rmErr)
 }

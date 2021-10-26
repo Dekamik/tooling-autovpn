@@ -82,3 +82,18 @@ func showRegions() error {
 
     return nil
 }
+
+func isRegionValid(regionName string) (bool, error) {
+    regions, regionsErr := getRegions()
+    if regionsErr != nil {
+        return false, regionsErr
+    }
+
+    for _, region := range regions {
+        if region.Id == regionName {
+            return true, nil
+        }
+    }
+
+    return false, nil
+}
