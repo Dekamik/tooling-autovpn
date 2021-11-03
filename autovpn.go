@@ -5,8 +5,10 @@ import (
     "os"
 )
 
+var version = "DEVELOPMENT_BUILD"
+
 func main() {
-    err := bindOptions(os.Args[1:], "v1.0.0")
+    err := bindOptions(os.Args[1:], version)
     check(err)
     err = readConfig()
     check(err)
@@ -14,7 +16,6 @@ func main() {
     if options.ShowRegions {
         err = showRegions()
         check(err)
-
         os.Exit(0)
     }
 
