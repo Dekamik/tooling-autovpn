@@ -1,0 +1,80 @@
+name: Release binaries
+
+on:
+  release:
+    types: [created]
+
+env:
+  GO_VERSION: ^1.17
+
+jobs:
+  release-linux:
+    name: Release for Linux
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux]
+        goarch: [386, amd64, arm, arm64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ GO_VERSION }}
+      - name: Build
+        run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build
+      - name: Create release asset
+        run: tar -czvf autovpn_${{ github.event.release.tag_name }}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz autovpn README.md LICENSE
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: autovpn.tar.gz
+          asset_name: autovpn_${{ github.event.release.tag_name }}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz
+          asset_content_type: application/gzip
+
+  release-windows:
+    name: Release for Windows
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [windows]
+        goarch: [386, amd64, arm, arm64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ GO_VERSION }}
+      - name: Build
+        run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build
+      - name: Setup cert
+        run: |
+          openssl req \
+            -newkey rsa:2048 -nodes -keyout codesign.key \
+            -x509 -days 3650 -out bundle.crt
+          export WINDOWS_CERT=$(bundle.crt)
+          export WINDOWS_KEY=${codesign.key}
+      - name: Sign binary
+        uses: jonfriesen/windows-signer-action@v1.0.0
+        env:
+          NAME: Dekamik
+          DOMAIN: http://dennisvonbargen.com
+          BINARY: autovpn.exe
+          WINDOWS_CERT: ${{ WINDOWS_CERT }}
+          WINDOWS_KEY: ${{ WINDOWS_KEY }}
+      - name: Create release asset
+        run: zip autovpn.zip autovpn.exe README.md LICENSE
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: autovpn.zip
+          asset_name: autovpn_${{ github.event.release.tag_name }}_${{ matrix.goos }}_${{ matrix.goarch }}.zip
+          asset_content_type: application/zip

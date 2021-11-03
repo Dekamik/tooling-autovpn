@@ -8,16 +8,16 @@ import (
     "net/http"
 )
 
-type region struct {
+type Region struct {
     Id      string `json:"id"`
     Country string `json:"country"`
 }
 
-func getRegions() ([]region, error) {
+func getRegions() ([]Region, error) {
     fmt.Print("Downloading regions...")
     defer fmt.Println("OK")
     type regionRes struct {
-        Data []region `json:"data"`
+        Data []Region `json:"data"`
     }
 
     url := "https://api.linode.com/v4/regions"
