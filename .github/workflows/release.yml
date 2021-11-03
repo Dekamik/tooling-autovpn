@@ -25,7 +25,7 @@ jobs:
       - name: Build
         run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags="-X 'main.version=${{ github.event.release.tag_name }}'"
       - name: Create release asset
-        run: tar -czvf autovpn.tar.gz autovpn README.md LICENSE
+        run: tar -czvf autovpn.tar.gz autovpn README.md LICENSE linux/install.sh
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
