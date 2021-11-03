@@ -4,6 +4,10 @@ on:
   release:
     types: [created]
 
+#on:
+#  release:
+#    types: [created]
+
 jobs:
   release-linux:
     name: Release for Linux
