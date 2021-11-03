@@ -67,8 +67,8 @@ jobs:
           NAME: Dekamik
           DOMAIN: http://dennisvonbargen.com
           BINARY: autovpn.exe
-          WINDOWS_CERT: ${{ WINDOWS_CERT }}
-          WINDOWS_KEY: ${{ WINDOWS_KEY }}
+          WINDOWS_CERT: ${ WINDOWS_CERT }
+          WINDOWS_KEY: ${ WINDOWS_KEY }
       - name: Create release asset
         run: zip autovpn.zip autovpn.exe README.md LICENSE
       - name: Upload release asset
