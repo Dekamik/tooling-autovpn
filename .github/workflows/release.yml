@@ -4,12 +4,13 @@ on:
   release:
     types: [created]
 
+env:
+  GO_VERSION: ^1.17
+
 jobs:
   release-linux:
     name: Release for Linux
     runs-on: ubuntu-latest
-    env:
-      GO_VERSION: ^1.17
     strategy:
       matrix:
         goos: [linux]
@@ -20,7 +21,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ GO_VERSION }}
+          go-version: ${{ env.GO_VERSION }}
       - name: Build
         run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X main.version={{ github.event.release.tag_name }}"
       - name: Create release asset
@@ -50,7 +51,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ GO_VERSION }}
+          go-version: ${{ env.GO_VERSION }}
       - name: Build
         run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X main.version={{ github.event.release.tag_name }}"
       - name: Setup cert
