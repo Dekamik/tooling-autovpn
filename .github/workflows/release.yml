@@ -23,7 +23,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
       - name: Build
-        run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X main.version={{ github.event.release.tag_name }}"
+        run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags="-X 'main.version={{ github.event.release.tag_name }}'"
       - name: Create release asset
         run: tar -czvf autovpn.tar.gz autovpn README.md LICENSE
       - name: Upload release asset
@@ -53,7 +53,7 @@ jobs:
 #        with:
 #          go-version: ${{ env.GO_VERSION }}
 #      - name: Build
-#        run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X main.version={{ github.event.release.tag_name }}"
+#        run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags="-X 'main.version={{ github.event.release.tag_name }}'"
 #      - name: Setup cert
 #        run: |
 #          openssl req \
