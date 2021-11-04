@@ -10,11 +10,11 @@ env:
 jobs:
   release-linux:
     name: Release for Linux
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         goos: [linux]
         goarch: [386, amd64, arm, arm64]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -24,9 +24,9 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
       - name: Build
         run: env GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags="-X 'main.version=${{ github.event.release.tag_name }}'"
-      - name: Create release asset
-        run: tar -czvf autovpn.tar.gz autovpn README.md LICENSE linux/install.sh
-      - name: Upload release asset
+      - name: Create tarball
+        run: tar --transform 's/.*\///g' -czvf autovpn.tar.gz autovpn README.md LICENSE linux/install.sh
+      - name: Upload tarball
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -67,9 +67,9 @@ jobs:
 #          BINARY: autovpn.exe
 #          WINDOWS_CERT: ${ WINDOWS_CERT }
 #          WINDOWS_KEY: ${ WINDOWS_KEY }
-#      - name: Create release asset
+#      - name: Create zip file
 #        run: zip autovpn.zip autovpn.exe README.md LICENSE
-#      - name: Upload release asset
+#      - name: Upload zip file
 #        uses: actions/upload-release-asset@v1
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
