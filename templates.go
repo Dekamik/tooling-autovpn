@@ -8,17 +8,16 @@ import (
     "text/template"
 )
 
-type TemplateName int
+type TemplateName string
 
 const(
-    Undefined TemplateName = iota
-    LinodeMain
-    LinodeVpn
+    LinodeMain TemplateName = "LinodeMain"
+    LinodeVpn TemplateName = "LinodeVpn"
 )
 
 var templates = map[TemplateName]*template.Template {
-    LinodeMain: template.Must(template.New("main").Parse(linodeMainTemplate)),
-    LinodeVpn: template.Must(template.New("vpn").Parse(linodeVpnTemplate)),
+    LinodeMain: template.Must(template.New(string(LinodeMain)).Parse(linodeMainTemplate)),
+    LinodeVpn: template.Must(template.New(string(LinodeVpn)).Parse(linodeVpnTemplate)),
 }
 
 type TemplateReceiver struct {
