@@ -8,20 +8,34 @@ import (
     "strings"
 )
 
+type Software int
+
+const (
+    Ansible Software = iota
+    OpenSSH          = 1
+    OpenVPN          = 2
+    Terraform        = 3
+)
+
 func tfApply() error {
-    return run(fmt.Sprintf("terraform -chdir=%s apply %s/.terraform/tfplan", config.WorkingDir, config.WorkingDir))
+    return run(fmt.Sprintf("%s -chdir=%s apply %s/.terraform/tfplan", softwareMap[Terraform], config.WorkingDir, config.WorkingDir))
 }
 
 func tfInit() error {
-    return run(fmt.Sprintf("terraform -chdir=%s init", config.WorkingDir))
+    return run(fmt.Sprintf("%s -chdir=%s init", softwareMap[Terraform], config.WorkingDir))
 }
 
 func tfPlan() error {
-    return run(fmt.Sprintf("terraform -chdir=%s plan -out %s/.terraform/tfplan", config.WorkingDir, config.WorkingDir))
+    return run(fmt.Sprintf("%s -chdir=%s plan -out %s/.terraform/tfplan", softwareMap[Terraform], config.WorkingDir, config.WorkingDir))
 }
 
-func ovpnConnect(configPath string, stdin bool) error {
-    cmd := ovpnCommand(configPath)
+func commandExists(cmd string) bool {
+    _, err := exec.LookPath(cmd)
+    return err == nil
+}
+
+func ovpnStart(configPath string, stdin bool) error {
+    cmd := ovpnConnect(configPath)
     if stdin {
         cmd.Stdin = os.Stdin
     }

@@ -30,7 +30,7 @@ func main() {
 
         fmt.Printf("Connecting with file in %s\n", path)
 
-        err = ovpnConnect(path, true)
+        err = ovpnStart(path, true)
         check(err)
         os.Exit(0)
     }
@@ -44,7 +44,7 @@ func main() {
     err = create()
     check(err)
 
-    err = ovpnConnect(fmt.Sprintf("%s/%s-%s.ovpn", config.WorkingDir, config.Hostname, options.Region), false)
+    err = ovpnStart(fmt.Sprintf("%s/%s-%s.ovpn", config.WorkingDir, config.Hostname, options.Region), false)
     check(err)
 
     err = purge()
