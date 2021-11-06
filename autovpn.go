@@ -19,6 +19,12 @@ func main() {
         os.Exit(0)
     }
 
+    err = checkPrerequisites()
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+
     if len(options.ConnectTo) != 0 {
         var path string
         if profile, ok := config.Profiles[options.ConnectTo]; ok {
