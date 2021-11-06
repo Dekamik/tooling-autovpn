@@ -30,7 +30,7 @@ func createFiles(instances []Instance) (int, error) {
     mainStruct := Main{Token: instances[0].Token}
     mainReceiver := TemplateReceiver{
         FilePath:     config.WorkingDir + "/main.tf",
-        TemplateName: "main",
+        TemplateName: LinodeMain,
         TemplateArgs: mainStruct,
     }
     _, err = writeFile(mainReceiver)
@@ -43,7 +43,7 @@ func createFiles(instances []Instance) (int, error) {
     for _, instance := range instances {
         args := TemplateReceiver{
             FilePath:     fmt.Sprintf("%s/%s.tf", config.WorkingDir, instance.Name),
-            TemplateName: "vpn",
+            TemplateName: LinodeVpn,
             TemplateArgs: instance,
         }
         _, err := writeFile(args)

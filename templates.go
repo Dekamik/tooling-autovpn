@@ -8,43 +8,22 @@ import (
     "text/template"
 )
 
-var tfMainTemplate = `terraform {
-  required_providers {
-    linode = {
-      source = "linode/linode"
-      version = "1.16.0"
-    }
-  }
-}
+type TemplateName int
 
-provider "linode" {
-  token = "{{.Token}}"
-}
-`
+const(
+    Undefined TemplateName = iota
+    LinodeMain
+    LinodeVpn
+)
 
-var tfVpnTemplate = `module "{{.Name}}" {
-  source = "git@github.com:Dekamik/vpn-modules.git//vpn-server?ref=v0.2.1"
-
-  token = "{{.Token}}"
-  public_keys = {
-    "{{.Hostname}}" = "{{.PublicKey}}"
-  }
-
-  name = "{{.Hostname}}-{{.Name}}"
-  region = "{{.Region}}"
-  type = "{{.Type}}"
-  download_dir = "{{.DownloadDir}}"
-}
-`
-
-var templates = map[string]*template.Template {
-    "main": template.Must(template.New("main").Parse(tfMainTemplate)),
-    "vpn": template.Must(template.New("vpn").Parse(tfVpnTemplate)),
+var templates = map[TemplateName]*template.Template {
+    LinodeMain: template.Must(template.New("main").Parse(linodeMainTemplate)),
+    LinodeVpn: template.Must(template.New("vpn").Parse(linodeVpnTemplate)),
 }
 
 type TemplateReceiver struct {
     FilePath string
-    TemplateName string
+    TemplateName TemplateName
     TemplateArgs interface{}
 }
 
