@@ -7,49 +7,33 @@ import (
     "strings"
 )
 
-type Main struct {
-    Token string
+func createFile(fileName string, templateName TemplateName, args interface{}) error {
+    err := os.MkdirAll(config.WorkingDir, 0777)
+    if err != nil { return err }
+
+    receiver := TemplateReceiver{
+        FilePath: fmt.Sprintf("%s/%s.tf", config.WorkingDir, fileName),
+        TemplateName: templateName,
+        TemplateArgs: args,
+    }
+
+    _, err = writeFile(receiver)
+    if err != nil { return err }
+
+    return nil
 }
 
-type Instance struct {
-    Name        string
-    Hostname    string
-    Token       string
-    PublicKey   string
-    Region      string
-    Type        string
-    DownloadDir string
-}
-
-func createFiles(instances []Instance) (int, error) {
+func createFiles(instances []LinodeInstanceArgs) (int, error) {
     var createdFiles = 0
 
-    err := os.MkdirAll(config.WorkingDir, 0777)
-    check(err)
-
-    mainStruct := Main{Token: instances[0].Token}
-    mainReceiver := TemplateReceiver{
-        FilePath:     config.WorkingDir + "/main.tf",
-        TemplateName: LinodeMain,
-        TemplateArgs: mainStruct,
-    }
-    _, err = writeFile(mainReceiver)
-    if err != nil {
-        return 0, err
-    } else {
-        createdFiles++
-    }
+    mainStruct := LinodeMainArgs{Token: instances[0].Token}
+    err := createFile("main", LinodeMain, mainStruct)
+    if err != nil { return 0, err }
+    createdFiles++
 
     for _, instance := range instances {
-        args := TemplateReceiver{
-            FilePath:     fmt.Sprintf("%s/%s.tf", config.WorkingDir, instance.Name),
-            TemplateName: LinodeVpn,
-            TemplateArgs: instance,
-        }
-        _, err := writeFile(args)
-        if err != nil {
-            return createdFiles, err
-        }
+        err = createFile(instance.Name, LinodeVpn, instance)
+        if err != nil { return createdFiles, err }
         createdFiles++
     }
 
@@ -58,7 +42,7 @@ func createFiles(instances []Instance) (int, error) {
 
 func create() error {
     fmt.Println("Creating VPN server...")
-    var instances []Instance
+    var instances []LinodeInstanceArgs
 
     sshFile, err := os.Open(config.SshPath)
     if err != nil { return err }
@@ -67,7 +51,7 @@ func create() error {
     if err != nil { return err }
     publicKey = strings.TrimSuffix(publicKey, "\n")
 
-    instances = append(instances, Instance{
+    instances = append(instances, LinodeInstanceArgs{
         Name:        options.Region,
         Hostname:    config.Hostname,
         Token:       config.Token,

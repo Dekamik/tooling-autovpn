@@ -37,14 +37,21 @@ var usage = `Tool for provisioning and connecting to a temporary VPN server.
 This server gets destroyed when the connection is terminated.
 
 Usage: 
-  autovpn REGION
+  autovpn (linode | digitalocean | aws | azure | gcp) REGION
+  autovpn (linode | digitalocean | aws | azure | gcp) --show-regions [--json | --no-headers]
   autovpn -c PROFILE
-  autovpn --show-regions [--json | --no-headers]
   autovpn -h | --help
   autovpn --version
 
 Arguments:
   REGION  Linode region for server. Find avaiable regions by running "autovpn regions"
+
+Providers:
+  linode        Linode
+  digitalocean  Digital Ocean
+  aws           Amazon Web Services
+  azure         Microsoft Azure
+  gcp           Google Cloud Platform
 
 Options:
   -c PROFILE      Connect to pre-defined VPN profile

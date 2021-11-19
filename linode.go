@@ -1,5 +1,19 @@
 package main
 
+type LinodeMainArgs struct {
+    Token string
+}
+
+type LinodeInstanceArgs struct {
+    Name        string
+    Hostname    string
+    Token       string
+    PublicKey   string
+    Region      string
+    Type        string
+    DownloadDir string
+}
+
 var linodeMainTemplate = `terraform {
   required_providers {
     linode = {
