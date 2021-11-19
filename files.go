@@ -23,7 +23,7 @@ provider "linode" {
 `
 
 var tfVpnTemplate = `module "{{.Name}}" {
-  source = "git@github.com:Dekamik/vpn-modules.git//vpn-server?ref=v0.2.2"
+  source = "git@github.com:Dekamik/vpn-modules.git//vpn-server?ref=v0.2.3"
 
   token = "{{.Token}}"
   public_keys = {
