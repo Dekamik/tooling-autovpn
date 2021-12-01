@@ -8,12 +8,16 @@ import (
     "net/http"
 )
 
+type LinodeTypePrice struct {
+    Hourly  float32 `json:"hourly"`
+    Monthly float32 `json:"monthly"`
+}
+
 type LinodeType struct {
-    Id           string  `json:"id"`
-    Label        string  `json:"label"`
-    Class        string  `json:"class"`
-    HourlyPrice  float32 `json:"price.hourly"`
-    MonthlyPrice float32 `json:"price.monthly"`
+    Id    string          `json:"id"`
+    Label string          `json:"label"`
+    Class string          `json:"class"`
+    Price LinodeTypePrice `json:"price"`
 }
 
 func getTypes() ([]LinodeType, error) {
@@ -62,8 +66,8 @@ func showTypes() error {
         fmt.Println(str)
     } else {
         matrix := make([][]string, len(types))
-        for i, r := range types {
-            matrix[i] = []string { r.Id, r.Label, r.Class, fmt.Sprintf("%f", r.HourlyPrice), fmt.Sprintf("%f", r.MonthlyPrice) }
+        for i, t := range types {
+            matrix[i] = []string {t.Id, t.Label, t.Class, fmt.Sprintf("%f", t.Price.Hourly), fmt.Sprintf("%f", t.Price.Monthly) }
         }
         if !options.NoHeaders {
             matrix = append([][]string{{"ID", "Label", "Class", "Hourly price (USD)", "Monthly price (USD)"}}, matrix...)
