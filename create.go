@@ -73,7 +73,7 @@ func create() error {
         Token:       config.Token,
         PublicKey:   publicKey,
         Region:      options.Region,
-        Type:        "g6-nanode-1",
+        Type:        options.LinType,
         DownloadDir: config.WorkingDir,
     })
 

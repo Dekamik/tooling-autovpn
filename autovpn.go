@@ -5,7 +5,7 @@ import (
     "os"
 )
 
-var version = "DEVELOPMENT_BUILD"
+var version = "DEVELOPMENT_BUILD" // Gets changed on GitHub Actions
 
 func main() {
     err := bindOptions(os.Args[1:], version)
@@ -15,6 +15,12 @@ func main() {
 
     if options.ShowRegions {
         err = showRegions()
+        check(err)
+        os.Exit(0)
+    }
+
+    if options.ShowTypes {
+        err = showTypes()
         check(err)
         os.Exit(0)
     }
@@ -41,9 +47,15 @@ func main() {
         os.Exit(0)
     }
 
-    if isValid, err := isRegionValid(options.Region); err != nil || !isValid {
+    if regionValid, err := isRegionValid(options.Region); err != nil || !regionValid {
         check(err)
         fmt.Printf("Region %s is not a valid Linode region, exiting...\n", options.Region)
+        os.Exit(1)
+    }
+
+    if typeValid, err := isTypeValid(options.LinType); err != nil || !typeValid {
+        check(err)
+        fmt.Printf("Type %s is not a valid Linode instance type, exiting...\n", options.LinType)
         os.Exit(1)
     }
 

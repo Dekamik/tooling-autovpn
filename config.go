@@ -9,8 +9,10 @@ import (
 type Options struct {
     Region     string `docopt:"REGION"`
     ConnectTo  string `docopt:"-c"`
+    LinType    string `docopt:"-t"`
 
     ShowRegions bool `docopt:"--show-regions"`
+    ShowTypes   bool `docopt:"--show-types"`
     NoHeaders   bool `docopt:"--no-headers"`
     PrintJson   bool `docopt:"--json"`
 
@@ -37,9 +39,10 @@ var usage = `Tool for provisioning and connecting to a temporary VPN server.
 This server gets destroyed when the connection is terminated.
 
 Usage: 
-  autovpn REGION
+  autovpn [-t TYPE_ID] REGION
   autovpn -c PROFILE
   autovpn --show-regions [--json | --no-headers]
+  autovpn --show-types
   autovpn -h | --help
   autovpn --version
 
@@ -48,7 +51,9 @@ Arguments:
 
 Options:
   -c PROFILE      Connect to pre-defined VPN profile
+  -t TYPE_ID      Linode instance type to spawn [default: g6-dedicated-2]
   --show-regions  Show available regions.
+  --show-types    Show available linode types
   --json          Print as JSON.
   --no-headers	  Suppress printout headers
   -h --help       Show this screen.
