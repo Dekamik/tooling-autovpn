@@ -5,7 +5,7 @@ import (
     "os"
 )
 
-var version = "DEVELOPMENT_BUILD"
+var version = "DEVELOPMENT_BUILD" // Gets changed on GitHub Actions
 
 func main() {
     err := bindOptions(os.Args[1:], version)
@@ -15,6 +15,12 @@ func main() {
 
     if options.ShowRegions {
         err = showRegions()
+        check(err)
+        os.Exit(0)
+    }
+
+    if options.ShowTypes {
+        err = showTypes()
         check(err)
         os.Exit(0)
     }
