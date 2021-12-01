@@ -47,9 +47,15 @@ func main() {
         os.Exit(0)
     }
 
-    if isValid, err := isRegionValid(options.Region); err != nil || !isValid {
+    if regionValid, err := isRegionValid(options.Region); err != nil || !regionValid {
         check(err)
         fmt.Printf("Region %s is not a valid Linode region, exiting...\n", options.Region)
+        os.Exit(1)
+    }
+
+    if typeValid, err := isTypeValid(options.LinType); err != nil || !typeValid {
+        check(err)
+        fmt.Printf("Type %s is not a valid Linode instance type, exiting...\n", options.LinType)
         os.Exit(1)
     }
 
