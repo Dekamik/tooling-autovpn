@@ -46,7 +46,7 @@ The program will open the tunnel and forward stdin, stdout and stderr.
 # Usage
 When all above is done, you can start using the command.
 
-Create and connect to a vpn server by running `autovpn <region>`.
+Create and connect to a vpn server by running `autovpn <region>`. It should take 2-5 minutes.
 When the session is created, simply send SIGTERM (Ctrl-C) to disconnect and destroy the server.
 
 You can view a list of available regions by running `autovpn --show-regions`.
