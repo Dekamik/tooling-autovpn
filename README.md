@@ -1,8 +1,8 @@
 # tooling-autovpn
 Tool for automatically creating, connecting to and destroying VPN servers on-the-fly.
 
-## Getting started
-### Prerequisites
+# Getting started
+## Prerequisites
 This tool requires the following programs:
 * OpenSSH
 * Terraform
@@ -13,7 +13,7 @@ These can be installed on linux by running `sudo bash ./install.sh`
 
 You also need an account on Linode and a generated API token for your account.
 
-### Configuring
+## Configuring
 You also need to create a config file with this path: `~/.autovpn/config`.
 Inside that file you will define some settings as follows:
 
@@ -24,7 +24,7 @@ token = "<your-linode-token>"
 workingdir = "/home/<youruser>/.autovpn/tmp"
 ```
 
-### Additional configurations
+## Additional configurations
 You can also define profile blocks for connecting to existing VPN servers with .ovpn files on your computer.
 Simply define the blocks as follows:
 
@@ -43,7 +43,7 @@ where `<profile>` is the name you gave the profile block after the dot.
 E.g. to connect to the `home` profile, call `autovpn -c home`. 
 The program will open the tunnel and forward stdin, stdout and stderr.
 
-## Usage
+# Usage
 When all above is done, you can start using the command.
 
 Create and connect to a vpn server by running `autovpn <region>`.
