@@ -43,7 +43,7 @@ where `<profile>` is the name you gave the profile block after the dot.
 E.g. to connect to the `home` profile, call `autovpn -c home`. 
 The program will open the tunnel and forward stdin, stdout and stderr.
 
-### Usage
+## Usage
 When all above is done, you can start using the command.
 
 Create and connect to a vpn server by running `autovpn <region>`.
